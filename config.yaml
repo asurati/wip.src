@@ -1,0 +1,40 @@
+baseurl: "https://asurati.github.io/wip/"
+languageCode: "en-us"
+title: "w-i-p"
+
+resourceDir: "/tmp/hugo_resources"
+publishDir: "/tmp/wip"
+
+permalinks:
+  post: "/post/:year/:month/:day/:slug/"
+
+menu:
+  main:
+    - name: Home
+      url: ""
+      weight: 1
+    - name: About
+      url: "about/"
+      weight: 2
+    - name: Categories
+      url: "categories/"
+      weight: 3
+    - name: Tags
+      url: "tags/"
+      weight: 4
+    - name: Subscribe
+      url: "index.xml"
+
+params:
+  footer: "&copy; 2021 [Amol Surati](https://github.com/asurati). This work is made available under
+    [CC BY 4.0](https://creativecommons.org/licenses/by/4.0)."
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+
+# Remove the dark border which appears due to
+# element.style.background-color:#272822
+  highlight:
+    codeFences: false
