@@ -34,7 +34,8 @@ The particular [model](https://www.raspberrypi.org/documentation/computers/raspb
 revision code `000f`. There are other RPi generations/models also that ship
 with vc4.
 
-
+The RPi PL011 UART serves as the main input and output interface, with the
+HDMI output connected to a monitor.
 ### **Software Setup:**
 
 A bare-metal environment, with U-Boot. The ability of U-Boot, to load files
