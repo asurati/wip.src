@@ -187,7 +187,7 @@ wrote assuming `Y=0` - the redirection occurred in the background transparently.
 The Vertex Shader:
 
 ```
-0x00601a00, 0xe0020c67, // li	vpr_setup, -, 0x301a00;
+0x00601a00, 0xe0020c67, // li	vpr_setup, -, 0x601a00;
 0x009e7000, 0x100009e7, // ;
 0x009e7000, 0x100009e7, // ;
 0x009e7000, 0x100009e7, // ;
