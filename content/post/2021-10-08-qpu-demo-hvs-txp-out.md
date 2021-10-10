@@ -39,7 +39,7 @@ particular values set can be found in the driver program,
 |:-----|----:|-------|
 |`TXP_DST_POINTER`|`0x404c7ea4`| The bus address of the output frame buffer, into which the TXP will write the scaled pixels.
 |`TXP_DST_PITCH`|`0x1680`| The pitch of the output frame buffer. `1440 * 4 = 5760`.
-|`TXP_DIM`|`0x43805a0`| The Width and the Height of the output frame buffer.
+|`TXP_DIM`|`0x43805a0`| `[15:0]=1440`. The Width of the output frame buffer.<br/>`[31:16]=1080`. The Height of the output frame buffer.
 |`TXP_DST_CTRL`|`0x545f0d01`| The TXP control register.<br/>`[0]=1`. Go.<br/>`[11:8]=13`. Output in ARGB32 Format.<br/>`[19:16]=0xf`. Byte Enable; `0xf` recommended.<br/>`[20]=1`. Enable writing the Alpha component.
 
 ---
