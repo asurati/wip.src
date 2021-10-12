@@ -15,10 +15,10 @@ inside the system RAM.
 
 The HVS FIFO2 has a choice in how its output is consumed - it can be consumed
 either by PV1, or by the TXP block. The RPi firmware, by default, seems to
-disable the FIFO2 (`DSP3_MUX`), so that it is not connected to PV1. This is
+disable the FIFO2 output (`DSP3_MUX`), so that it is not connected to PV1. This is
 very fortunate, as the firmware has already done a part of the necessary setup.
 
-The demo is based off of QPU Demo:
+The demo is based on
 [QPU Demo: Triangle with MSAA 4x](/wip/post/2021/10/05/qpu-demo-triangle-with-msaa-4x/). That demo presents a rendering of a triangle stored inside a 640x480 frame
 buffer. The default RPi setup (RPi firmware + U-Boot) has the HDMI pipeline
 running at 1920x1080 resolution. When the triangle is displayed on the screen,
@@ -26,6 +26,11 @@ the image is scaled-up by the HVS to 1440x1080, maintaining the aspect ratio.
 
 This demo here attempts to have the display pipeline write out that scaled
 image into a separate, appropriately sized frame buffer in the system RAM.
+Although the HDMI pipeline (consisting of HVS FIFO1/Channel1, PV2, and the HDMI
+encoder), may not allow poking into their internal video FIFO buffers,
+the HVS FIFO2/Channel2 and the TXP block can be configured to gather the
+output from the HVS into the system RAM, creating an identical copy of the image
+scaled and displayed on the screen.
 
 The format of the HVS registers are shown in 
 [HVS and PV Settings](/wip/post/2021/10/07/hvs-and-pv-settings/). The
