@@ -55,6 +55,7 @@ a horizontal blanking interval can be calculated as follows:
 
 The sizes (in the units of scanlines) of the various portions of a vertical
 blanking interval can be calculated as follows:
+
 |Value|Field|Comment|
 |-----:|-----:|-------|
 |`4`|`vfp` | Vertical Front Porch = `vsyncstart - vdisp`.
