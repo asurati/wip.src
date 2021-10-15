@@ -67,7 +67,7 @@ The required pixel clock rate is given by `htotal * vtotal * refreshrate`, or
 ---
 
 
-Below is a snippet of `bcm2708-rpi-b.dtb`:
+Below is a snippet of [`bcm2708-rpi-b.dtb`](https://github.com/raspberrypi/firmware/blob/master/boot/bcm2708-rpi-b.dtb):
 
 ```
 hdmi@7e902000 {
