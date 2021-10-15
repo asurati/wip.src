@@ -39,6 +39,7 @@ The break-down of the fields:
 
 The sizes (in the units of pixels or pixel-clocks) of the various portions of
 a horizontal blanking interval can be calculated as follows:
+
 |Value|Field|Comment|
 |-----:|-----:|-------|
 |`88`|`hfp` | Horizontal Front Porch = `hsyncstart - hdisp`.
