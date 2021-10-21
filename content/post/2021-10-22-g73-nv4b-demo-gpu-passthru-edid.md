@@ -129,8 +129,8 @@ which helps in finding out, among other pieces, the information that is needed
 to gather the EDID block of the connected display.
 
 The DCB contains a Header, and a table of Device Entries. The DCB Header
-further points towards a [Communications Control Block (CCB)]() table, and
-a [Connector Table](). The details of parsing these tables are shown below:
+further points towards a [Communications Control Block (CCB)](http://download.nvidia.com/open-gpu-doc/DCB/1/DCB-4.0-Specification.html#_communications_control_block)
+table, and a [Connector Table](http://download.nvidia.com/open-gpu-doc/DCB/1/DCB-4.0-Specification.html#_connector_table). The details of parsing these tables are shown below:
 
 The DCB table starts at offset `0x36` from the start of the BIOS image. See
 the function [dcb_table](https://lxr.missinglinkelectronics.com/linux/drivers/gpu/drm/nouveau/nvkm/subdev/bios/dcb.c)
