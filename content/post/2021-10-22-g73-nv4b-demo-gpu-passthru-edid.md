@@ -396,22 +396,22 @@ which frees up a program from driving the bus on its own.
 
 The relevant source code, along with some timing parameters, can be found
 [here](https://lxr.missinglinkelectronics.com/linux/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/bit.c) and
-[here](https://lxr.missinglinkelectronics.com/linux/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/busnv04.c)
+[here](https://lxr.missinglinkelectronics.com/linux/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/busnv04.c).
 
 The EDID Ports are extended CRTC registers; upon boot, the GPU keeps these
 registers locked, preventing access and modification. The DDC bus cannot be
 driven if these registers are locked. The locking/unlocking of these registers
 can be done by setting the CRTC index register `0x1f` to appropriate values.
-See [nvkm_lockvgac](https://lxr.missinglinkelectronics.com/linux/drivers/gpu/drm/nouveau/nvkm/engine/disp/vga.c)
+See the function [nvkm_lockvgac](https://lxr.missinglinkelectronics.com/linux/drivers/gpu/drm/nouveau/nvkm/engine/disp/vga.c).
 
-The `nouveau` driver unlocks the registers before it begins with the device initialization;
-see [nvkm_devinit_preinit](https://lxr.missinglinkelectronics.com/linux/drivers/gpu/drm/nouveau/nvkm/subdev/devinit/base.c)
+The `nouveau` driver unlocks the registers before it begins with the device initialization.
+See the function [nvkm_devinit_preinit](https://lxr.missinglinkelectronics.com/linux/drivers/gpu/drm/nouveau/nvkm/subdev/devinit/base.c).
 
 ---
 
 ### **Running the demo:**
 
-The driver program can be found [here]()https://github.com/asurati/x04/blob/main/sys/main.c. The output is:
+The driver program can be found [here](https://github.com/asurati/x04/blob/main/sys/main.c). The output is:
 
 ```
 00 ff ff ff ff ff ff 00 10 ac 54 d0 00 00 00 00
