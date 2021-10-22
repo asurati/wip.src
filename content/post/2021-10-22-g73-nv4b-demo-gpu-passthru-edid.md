@@ -130,10 +130,14 @@ to gather the EDID block of the connected display.
 
 The DCB contains a Header, and a table of Device Entries. The DCB Header
 further points towards a [Communications Control Block (CCB)](http://download.nvidia.com/open-gpu-doc/DCB/1/DCB-4.0-Specification.html#_communications_control_block)
-table, and a [Connector Table](http://download.nvidia.com/open-gpu-doc/DCB/1/DCB-4.0-Specification.html#_connector_table). The details of parsing these tables are shown below:
+table, and a [Connector](http://download.nvidia.com/open-gpu-doc/DCB/1/DCB-4.0-Specification.html#_connector_table) table. The details of parsing these tables are shown below.
+
+The DCB Device Entries can be thought of as describing logical output ports,
+while the entries in the Connector table can be thought of as describing the
+physical output connectors.
 
 The DCB table starts at offset `0x36` from the start of the BIOS image. See
-the function [dcb_table](https://lxr.missinglinkelectronics.com/linux/drivers/gpu/drm/nouveau/nvkm/subdev/bios/dcb.c)
+the function [dcb_table](https://lxr.missinglinkelectronics.com/linux/drivers/gpu/drm/nouveau/nvkm/subdev/bios/dcb.c).
 
 ```
 $ hexdump -C nv.bios.rom
@@ -161,10 +165,10 @@ The structure of the DCB Header in the BIOS:
 |Address|Value|Comment|
 |-----:|-----:|-------|
 |`0x8dd6`|`0x30`| Version of the DCB table. This GPU being almost two decades old, does not sport a 4.0 DCB.
-|`0x8dd7`|`0x19`| Size of the DCB Header, in bytes. The table of DCB Entries immediately follow the header.
+|`0x8dd7`|`0x19`| Size of the DCB Header, in bytes. The table of DCB Device Entries immediately follow this header.
 |`0x8dd8`|`0xa`| Number of DCB Device Entries inside the table.
 |`0x8dd9`|`0x8`| Size of each DCB Device Entry, in bytes.
-|`0x8dda`|`0x8e3f`| Offset to the Communications Control Block (CCB) table., from the start of the BIOS image.
+|`0x8dda`|`0x8e3f`| Offset to the Communications Control Block (CCB) table, from the start of the BIOS image.
 |`0x8ddc`|`0x4edcbdcb`| DCB Signature.
 |`0x8de0`|`0x8e78`| Offset to the GPIO Assignment table.
 |`0x8de2`|`0x8e6c`| Offset to the Input Devices table.
@@ -175,7 +179,7 @@ The structure of the DCB Header in the BIOS:
 |`0x8dec`|`0x31`| DCB Flags.
 |`0x8ded`|`0x5951`| Offset to the HDTV Translation table.
 
-The DCB Device Entries (they describe the output ports on the card) are show
+The DCB Device Entries (they describe the output ports on the card) are shown
 below. Based on the header, there are 10 entries.
 Each entry consumes two rows in the table shown below - the first row describes
 the Display Path Information for the entry, while the second describes the
@@ -186,21 +190,21 @@ DCB Device Entry, Index 0:
 
 |Address|Value|Comment|
 |-----:|-----:|-------|
-|`0x8def`|`0x1000300`|`[3:0] = 0`. Display Type is `CRT`, or the common analog VGA display.<br><br>`[7:4] = 0`. The EDID Port to use to query EDID of any display connected to this output port. This value is the index into the CCB table.<br><br>`[11:8] = 3`. Head Bitmask describes the fact that the output port isn't exclusively assigned to one of the two heads. Depending on the programming, any one of the two heads (CRTC controllers) can drive it.<br><br>`[15:12] = 0`. Connector Index; the index, into the Connector table, to the entry which describes the connection to this output port.<br><br>`[19:16] = 0`. Logical Bus Number. Used for mutual exclusion.<br>For example, when a single physical port is capable of driving either a digital or an analog output, it will have two entries in the DCB table, both with the same bus number. This common value helps the driver in avoiding erroneously programming the same physical output port twice - once as digital and at the same time, once as analog.<br><br>`[21:20] = 0`. Location; describes an internal encoder.<br><br>`[22]`,`[23]`. TODO.<br><br>`[27:24] = 1`. TODO. Output Resource description.
+|`0x8def`|`0x1000300`|`[3:0] = 0`. Display Type. The value represents a `CRT`, or the common analog VGA display.<br><br>`[7:4] = 0`. The EDID Port to use to query EDID of any display connected to this output port. This value is the index into the CCB table.<br><br>`[11:8] = 3`. Head Bitmask. The value represents the fact that the output port isn't exclusively assigned to one of the two heads. Depending on the programming, any one of the two heads (CRTC controllers) can drive it.<br><br>`[15:12] = 0`. Connector Index; the index, into the Connector table, to the entry which describes the physical connector on the card housing this output port.<br><br>`[19:16] = 0`. Logical Bus Number. Used for mutual exclusion.<br>For example, a DVI-I physical connector has two DCB Device Entries, one for the digital output, and the other for the analog output. But only one type of output can be enabled. By setting the bus number of the two entries to a common value, the driver can prevent running both the ports simultaneously.<br><br>`[21:20] = 0`. Location; describes an internal encoder.<br><br>`[22]`,`[23]`. TODO.<br><br>`[27:24] = 1`. TODO. Output Resource description.
 |`0x8df3`|`0x28`| `CRT` specific information. Based on the [parse_dcb20_entry](https://lxr.missinglinkelectronics.com/linux/drivers/gpu/drm/nouveau/nouveau_bios.c) function, this field is the maximum frequency of the pixel clock (RAMDAC?) when driving the analog display over this output port. The value represents 400000 KHz (`0x28 * 10000`), or 400MHz.
 
 DCB Device Entry, Index 1:
 
 |Address|Value|Comment|
 |-----:|-----:|-------|
-|`0x8df7`|`0x3000302`|`[3:0] = 2`. Display Type is `TMDS`, that is, DVI/HDMI. This is the same output port as above, as the bus number is the same. But this instance is responsible for driving a digital display.
-|`0x8dfb`|`0`|`[1:0] = 0`. The EDID source is the DDC.
+|`0x8df7`|`0x3000302`|`[3:0] = 2`. Display Type is `TMDS`, that is, DVI/HDMI. This is the same physical connector as found in the entry above; the bus number is the same. But this instance is responsible for driving a digital display.
+|`0x8dfb`|`0`|`[1:0] = 0`. `TMDS` specfic information. The value represents the fact that EDID blocks can be read through the corresponding DDC/I<sup>2</sup>C channel (represented by the EDID Port field).
 
 DCB Device Entry, Index 2:
 
 |Address|Value|Comment|
 |-----:|-----:|-------|
-|`0x8dff`|`0x4011310`|`[3:0] = 0`. Display Type is `CRT`.<br><br>`[7:4] = 1`. The EDID Port to use to query EDID of any display connected to this output port. This value is the index into the CCB table.<br><br>`[11:8] = 3`. Head Bitmask.<br><br>`[15:12] = 1`. Connector Index; the index, into the Connector table, to the entry which describes the connection to this output port.<br><br>`[19:16] = 1`. Logical Bus Number.<br><br>`[21:20] = 0`. Location; describes an internal encoder.<br><br>`[22]`,`[23]`. TODO.<br><br>`[27:24] = 4`. TODO. Output Resource description.
+|`0x8dff`|`0x4011310`|`[3:0] = 0`. Display Type is `CRT`.<br><br>`[7:4] = 1`. The EDID Port to use to query EDID of any display connected to this output port. This value is the index into the CCB table.<br><br>`[11:8] = 3`. Head Bitmask.<br><br>`[15:12] = 1`. Connector Index.<br><br>`[19:16] = 1`. Logical Bus Number.<br><br>`[21:20] = 0`. Location; describes an internal encoder.<br><br>`[22]`,`[23]`. TODO.<br><br>`[27:24] = 4`. TODO. Output Resource description.
 |`0x8e03`|`0x28`| `CRT` specific information.
 
 DCB Device Entry, Index 3:
@@ -214,8 +218,8 @@ DCB Device Entry, Index 4:
 
 |Address|Value|Comment|
 |-----:|-----:|-------|
-|`0x8e0f`|`0x20223f1`|`[3:0] = 1`. Display Type is `TV`.<br><br>`[7:4] = f`. The value suggests that the EDID information is not available through any entry within the CCB table - other methods (straps, SBIOS) may have to be employed.<br><br>`[11:8] = 3`. Head Bitmask describes the fact that the output port isn't exclusively assigned to one of the two heads. Depending on the programming, any one of the two heads (CRTC controllers) can drive it.<br><br>`[15:12] = 2`. Connector Index; the index, into the Connector table, to the entry which describes the connection to this output port.<br><br>`[19:16] = 2`. Logical Bus Number.<br><br>`[21:20] = 0`. Location; describes an internal encoder.<br><br>`[22]`,`[23]`. TODO.<br><br>`[27:24] = 2`. TODO. Output Resource description.
-|`0x8e13`|`0xc0c080`| `TV` specific information.<br>`[2:0] = 0`. SDTV Format. The value represents `NTSC_M(US)`.<br><br>`[19:16][7:4] = 0x08`. TVDAC description. The value represents Standard HDTV DAC.<br><br>`[15:8] = 0xc0`. Encoder Identifier. The value represents NVIDIA Internal Encoder.<br><br>`[20] = 0`. The device doesn't use external communication port.<br><br>`[22:21] = 2`. One output device has 3 connectors.<br><br>`[26:23] = 1`. HDTV Format. The value represents HDTV 480i.
+|`0x8e0f`|`0x20223f1`|`[3:0] = 1`. Display Type is `TV`.<br><br>`[7:4] = f`. The value suggests that the EDID information is not available through any entry within the CCB table - other methods (straps, SBIOS) may have to be employed.<br><br>`[11:8] = 3`. Head Bitmask.<br><br>`[15:12] = 2`. Connector Index.<br><br>`[19:16] = 2`. Logical Bus Number.<br><br>`[21:20] = 0`. Location; describes an internal encoder.<br><br>`[22]`,`[23]`. TODO.<br><br>`[27:24] = 2`. TODO. Output Resource description.
+|`0x8e13`|`0xc0c080`| `TV` specific information.<br>`[2:0] = 0`. SDTV Format. The value represents `NTSC_M(US)`.<br><br>`[19:16][7:4] = 0x08`. TVDAC description. The value represents Standard HDTV DAC.<br><br>`[15:8] = 0xc0`. Encoder Identifier. The value represents NVIDIA Internal Encoder.<br><br>`[20] = 0`. The device doesn't use external communication port.<br><br>`[22:21] = 2`. This output port has 3 connectors. The value perhaps means that one can connect break-out cables of various types to the same physical connector in order to support different TV-out facilities.<br><br>`[26:23] = 1`. HDTV Format. The value represents HDTV 480i.
 
 
 DCB Device Entries, Index 5 to 9:
@@ -324,8 +328,8 @@ CCB table entry, Index 0:
 
 |Address|Value|Comment|
 |-----:|-----:|-------|
-|`0x8e44`|`0x37`| CRTC Index register for driving the I<sup>2</sup> bus.
-|`0x8e45`|`0x36`| CRTC Index register for sensing the I<sup>2</sup> bus.
+|`0x8e44`|`0x37`| CRTC Index register for driving the I<sup>2</sup>C bus.
+|`0x8e45`|`0x36`| CRTC Index register for sensing the I<sup>2</sup>C bus.
 |`0x8e46`|`0`| Reserved/Unknown.
 |`0x8e47`|`0`| Type of the CCB Entry format. `0 = DCB_I2C_NV04_BIT`.
 
@@ -333,8 +337,8 @@ CCB table entry, Index 1:
 
 |Address|Value|Comment|
 |-----:|-----:|-------|
-|`0x8e48`|`0x3f`| CRTC Index register for driving the I<sup>2</sup> bus.
-|`0x8e49`|`0x3e`| CRTC Index register for sensing the I<sup>2</sup> bus.
+|`0x8e48`|`0x3f`| CRTC Index register for driving the I<sup>2</sup>C bus.
+|`0x8e49`|`0x3e`| CRTC Index register for sensing the I<sup>2</sup>C bus.
 |`0x8e4a`|`0`| Reserved/Unknown.
 |`0x8e4b`|`0`| Type of the CCB Entry format. `0 = DCB_I2C_NV04_BIT`.
 
@@ -342,8 +346,8 @@ CCB table entry, Index 2:
 
 |Address|Value|Comment|
 |-----:|-----:|-------|
-|`0x8e4c`|`0x51`| CRTC Index register for driving the I<sup>2</sup> bus.
-|`0x8e4d`|`0x50`| CRTC Index register for sensing the I<sup>2</sup> bus.
+|`0x8e4c`|`0x51`| CRTC Index register for driving the I<sup>2</sup>C bus.
+|`0x8e4d`|`0x50`| CRTC Index register for sensing the I<sup>2</sup>C bus.
 |`0x8e4e`|`0`| Reserved/Unknown.
 |`0x8e4f`|`0`| Type of the CCB Entry format. `0 = DCB_I2C_NV04_BIT`.
 
@@ -362,26 +366,36 @@ The kernel command-line to enable these traces is: `nouveau.debug=trace`.
 
 ### **Display Path Summary**
 
-A display is plugged onto the connector found on the middle bracket. The
-corresponding Connector entry has the index 1, shown in the driver's output
-as `DCB conn 01: 2130`.
+A HDMI display is plugged onto the physical connector found on the middle
+bracket. The corresponding Connector entry has the index 1,
+shown in the driver's output as
 
-The DCB Device Entry with Index 3 is the relevant entry which points to this
-Connector entry - that entry is for a digital output port, and it
-has its Connector Index set to 1. Furthermore, it has its EDID Port set to
-Index 1. The DCB Device Entry is shown in the driver's output as
-`DCB outp 03: 04011312 00000000`.
+```
+[    3.097567] nouveau 0000:01:00.0: DRM: DCB conn 01: 2130
+```
 
-The EDID Port with Index 1 is the DDC/I<sup>2</sup>C bus with the same index, displayed
-by the driver as:
-`i2c: ccb 01: type 00 drive 3f sense 3e share ff auxch ff`.
+The DCB Device Entry with Index 3, an entry for a digital output port which its
+Connector Index set to 1, is the relevant entry which points to this
+Connector entry. Furthermore, it has its EDID Port set to CCB Entry Index 1.
+The DCB Device Entry is shown in the driver's output as
+
+```
+[    3.097564] nouveau 0000:01:00.0: DRM: DCB outp 03: 04011312 00000000
+```
+
+The CCB Entry with Index 1 describes the DDC/I<sup>2</sup>C bus, displayed by
+the driver as:
+
+```
+[    5.073002] nouveau 0000:00:1e.0: i2c: ccb 01: type 00 drive 3f sense 3e share ff auxch ff
+```
 
 Thus, one must configure the CRTC indices `0x3e/0x3f` in order to drive the
 I<sup>2</sup>C bus, and extract the EDID information of the connected display.
 
-Note that the CCB entry with Index 2 (CRTC indices `0x50/0x51`) is not referenced by any
-output device. The correponding bus might be connected to some other
-peripheral.
+Note that the CCB Entry with Index 2 (CRTC indices `0x50/0x51`) is not
+referenced by any output port. The correponding bus might be connected to some
+other peripheral.
 
 This complete the trace of the display path.
 
