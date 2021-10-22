@@ -411,23 +411,4 @@ See the function [nvkm_devinit_preinit](https://lxr.missinglinkelectronics.com/l
 
 ### **Running the demo:**
 
-The driver program can be found [here](https://github.com/asurati/x04/blob/main/sys/main.c). The output is:
-
-```
-00 ff ff ff ff ff ff 00 10 ac 54 d0 00 00 00 00
-23 17 01 03 80 30 1b 78 ea 16 c5 a4 56 50 9f 26
-12 50 54 a5 4b 00 71 4f 81 80 d1 c0 01 01 01 01
-01 01 01 01 01 01 02 3a 80 18 71 38 2d 40 58 2c
-45 00 dc 0b 11 00 00 1e 00 00 00 ff 00 31 4d 56
-44 31 33 38 53 30 51 50 54 0a 00 00 00 fc 00 44
-45 4c 4c 20 53 32 32 34 30 4c 0a 20 00 00 00 fd
-00 38 4c 1e 53 11 00 0a 20 20 20 20 20 20 01 10
-02 03 1f f1 4c 90 05 04 03 02 07 16 01 14 1f 12
-13 23 09 07 07 83 01 00 00 65 03 0c 00 10 00 02
-3a 80 18 71 38 2d 40 58 2c 45 00 dc 0b 11 00 00
-1e 01 1d 80 18 71 1c 16 20 58 2c 25 00 dc 0b 11
-00 00 9e 01 1d 00 72 51 d0 1e 20 6e 28 55 00 dc
-0b 11 00 00 1e 8c 0a d0 8a 20 e0 2d 10 10 3e 96
-00 dc 0b 11 00 00 18 00 00 00 00 00 00 00 00 00
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 b7
-```
+The driver program can be found [here](https://github.com/asurati/x04/blob/main/sys/main.c).
