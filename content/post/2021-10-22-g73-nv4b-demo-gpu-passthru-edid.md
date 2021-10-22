@@ -32,9 +32,9 @@ devices.*
 ---
 ### **Hardware Setup:**
 
-The GPU supports 2 dual-link DVI-I ports, and 1 S-Video/TV-out port. A HDMI
+The GPU supports 2 dual-link DVI-I ports, and 1 S-Video/TV-out port. An HDMI
 display is connected to one of the DVI-I ports, with a DVI-to-HDMI cable. The
-cable also works as a HDMI-to-DVI cable (for instance, when connecting a RPi1B
+cable also works as an HDMI-to-DVI cable (for instance, when connecting a RPi1B
 to a DVI display), thanks to the similarities between the two protocols.
 
 The GPU card is inserted into a PCI Express x16 slot on the host machine. The
@@ -366,7 +366,7 @@ The kernel command-line to enable these traces is: `nouveau.debug=trace`.
 
 ### **Display Path Summary**
 
-A HDMI display is plugged onto the physical connector found on the middle
+An HDMI display is plugged onto the physical connector found on the middle
 bracket. The corresponding Connector entry has the index 1,
 shown in the driver's output as
 
