@@ -240,12 +240,12 @@ DCB Device Entries, Index 5 to 9:
 When the Linux OS boots, the `nouveau` driver prints these entries as:
 
 ```
-[    3.097559] nouveau 0000:01:00.0: DRM: DCB version 3.0
-[    3.097561] nouveau 0000:01:00.0: DRM: DCB outp 00: 01000300 00000028
-[    3.097562] nouveau 0000:01:00.0: DRM: DCB outp 01: 03000302 00000000
-[    3.097563] nouveau 0000:01:00.0: DRM: DCB outp 02: 04011310 00000028
-[    3.097564] nouveau 0000:01:00.0: DRM: DCB outp 03: 04011312 00000000
-[    3.097565] nouveau 0000:01:00.0: DRM: DCB outp 04: 020223f1 00c0c080
+[    5.232076] nouveau 0000:00:1e.0: DRM: DCB version 3.0
+[    5.232078] nouveau 0000:00:1e.0: DRM: DCB outp 00: 01000300 00000028
+[    5.232080] nouveau 0000:00:1e.0: DRM: DCB outp 01: 03000302 00000000
+[    5.232081] nouveau 0000:00:1e.0: DRM: DCB outp 02: 04011310 00000028
+[    5.232082] nouveau 0000:00:1e.0: DRM: DCB outp 03: 04011312 00000000
+[    5.232083] nouveau 0000:00:1e.0: DRM: DCB outp 04: 020223f1 00c0c080
 ```
 
 ---
@@ -292,11 +292,11 @@ Connector table entries:
 When the Linux OS boots, the `nouveau` driver prints these entries as:
 
 ```
-[    3.097566] nouveau 0000:01:00.0: DRM: DCB conn 00: 1030
-[    3.097567] nouveau 0000:01:00.0: DRM: DCB conn 01: 2130
-[    3.097568] nouveau 0000:01:00.0: DRM: DCB conn 02: 0210
-[    3.097568] nouveau 0000:01:00.0: DRM: DCB conn 03: 0211
-[    3.097569] nouveau 0000:01:00.0: DRM: DCB conn 04: 0213
+[    5.232085] nouveau 0000:00:1e.0: DRM: DCB conn 00: 1030
+[    5.232086] nouveau 0000:00:1e.0: DRM: DCB conn 01: 2130
+[    5.232087] nouveau 0000:00:1e.0: DRM: DCB conn 02: 0210
+[    5.232088] nouveau 0000:00:1e.0: DRM: DCB conn 03: 0211
+[    5.232089] nouveau 0000:00:1e.0: DRM: DCB conn 04: 0213
 ```
 
 ---
@@ -371,7 +371,7 @@ bracket. The corresponding Connector entry has the index 1,
 shown in the driver's output as
 
 ```
-[    3.097567] nouveau 0000:01:00.0: DRM: DCB conn 01: 2130
+[    5.232086] nouveau 0000:00:1e.0: DRM: DCB conn 01: 2130
 ```
 
 The DCB Device Entry with Index 3, an entry for a digital output port which its
@@ -380,7 +380,7 @@ Connector entry. Furthermore, it has its EDID Port set to CCB Entry Index 1.
 The DCB Device Entry is shown in the driver's output as
 
 ```
-[    3.097564] nouveau 0000:01:00.0: DRM: DCB outp 03: 04011312 00000000
+[    5.232082] nouveau 0000:00:1e.0: DRM: DCB outp 03: 04011312 00000000
 ```
 
 The CCB Entry with Index 1 describes the DDC/I<sup>2</sup>C bus, displayed by
