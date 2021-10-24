@@ -374,8 +374,8 @@ shown in the driver's output as
 [    5.232086] nouveau 0000:00:1e.0: DRM: DCB conn 01: 2130
 ```
 
-The DCB Device Entry with Index 3, an entry for a digital output port which its
-Connector Index set to 1, is the relevant entry which points to this
+The DCB Device Entry with Index 3, an entry for a digital output port with its
+Connector Index set to 1, is the relevant DCB Device Entry that points to this
 Connector entry. Furthermore, it has its EDID Port set to CCB Entry Index 1.
 The DCB Device Entry is shown in the driver's output as
 
