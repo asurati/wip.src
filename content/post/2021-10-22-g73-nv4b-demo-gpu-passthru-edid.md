@@ -136,7 +136,8 @@ The DCB Device Entries can be thought of as describing logical output ports,
 while the entries in the Connector table can be thought of as describing the
 physical output connectors.
 
-The DCB table starts at offset `0x36` from the start of the BIOS image. See
+The offset of the DCB table is itself found at the offset `0x36` from the start
+of the BIOS image. See
 the function [dcb_table](https://lxr.missinglinkelectronics.com/linux/drivers/gpu/drm/nouveau/nvkm/subdev/bios/dcb.c).
 
 ```
@@ -397,7 +398,7 @@ Note that the CCB Entry with Index 2 (CRTC indices `0x50/0x51`) is not
 referenced by any output port. The correponding bus might be connected to some
 other peripheral.
 
-This complete the trace of the display path.
+This completes the trace of the display path.
 
 ---
 
