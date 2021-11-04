@@ -117,7 +117,7 @@ has the value `0x58000`. The variable `using_prediv` has the value `0`.
 
 Then, the rate at which the PLLH clock runs is calculated as:
 
-`19.2 MHz * ((0x4d << 20) + 0x58000)) >> 20 = 1485 MHz`.
+`(19.2 MHz * (0x4d << 20) + 0x58000)) >> 20 = 1485 MHz`.
 
 The PLLH_PIX clock is a divider clock, sourcing its input from the output of
 the PLLH clock. The PLLH_PIX clock has a fixed divider of `10`, and another 8-bit
