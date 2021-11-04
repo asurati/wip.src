@@ -60,11 +60,13 @@ The list of HVS registers, and their contents.
 |`[0xe]=0x0`| `DISPLACT2` register.<br/>Same as above, but for FIFO2/channel2.
 
 The DisplayLists at index 0x0:
+
 |HVS Word|Comment|
 |:-----|-------|
 |`[0x800]=0x80000000`| `CTL0` register.<br/>`[31]` = `1`. Marks the end of the list.
 
 The DisplayLists at index 0x664. This list corresponds to the frame buffer setup by U-Boot.
+
 |HVS Word|Comment|
 |:-----|-------|
 |`[0xe64]=0x4e007807`| `CTL0` register.<br/>`[30]` = `1`. Valid list.<br/>`[29:24]` = `14`. The number of valid words in this list, excluding the word that marks the end of the list.<br/>`[21:20]` = `0`. Linear Tiling.<br/>`[16]` = `0`. No horizontal flip.<br/>`[15]` = `0`. No vertical flip.<br/>`[14:13]` = `3`. Pixel Order is ABGR32. This value is in conflict with the actual frame buffer order ARGB32. Perhaps the HVS is converting from the input format.<br/>`[12:11]` = `3`. RGBA rounding.<br/>`[10:8]` = `0`. SCL1 (CbCr plane) scaling. Set to the same as SCL0 scaling.<br/>`[7:5]` = `0`. SCL0 scaling (RGB, or Y plane). Horizontal and Vertical scaling is to be performed by a Polyphase Filter (PPF).<br/>`[4]` = `0`. Unity not set.<br/>`[3:0]` = `7`. Pixel Format is RGBA8888. This value is in conflict with the actual frame buffer format BGRA8888.
@@ -101,6 +103,7 @@ The PPF being utilized is the Mitchell-Netravali filter. The parameters are pack
 
 
 The DisplayLists at index 0x994. This list corresponds to the frame buffer setup by the demos.
+
 |HVS Word|Comment|
 |:-----|-------|
 |`[0x1194]=0x4e007807`| `CTL0` register.
@@ -122,6 +125,7 @@ The DisplayLists at index 0x994. This list corresponds to the frame buffer setup
 
 ---
 ### **PixelValve Registers:**
+
 |PV Word|Comment|
 |:-----|-------|
 |`[0x0]=0x177005`| `CONTROL` register.<br/>`[23:21]` = `0`. Format 24.<br/>`[20:15]` = `46`. FIFO Level.<br/>`[14]` = `1`. Clear at Start.<br/>`[13]` = `1`. Trigger Underflow.<br/>`[12]` = `1`. Wait for HStart.<br/>`[5:4]` = `0`. No Pixel Repetition.<br/>`[3:2]` = `1`. Pixel Clock select. Selects HDMI encoder clock.<br/>`[0]` = `1`. PV Enable.
