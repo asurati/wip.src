@@ -15,7 +15,7 @@ concepts used here borrow heavily from those of OpenGL.
 
 The GPU pipeline supports running in non-vertex-shading mode, or the NV mode.
 In this mode, pre-shaded vertices are presented to the pipeline. That is,
-the jobs of coordinate and vertex shader is done outside of the pipeline. In
+the jobs of coordinate and vertex shader are done outside of the pipeline. In
 this demo, those jobs/calculations are done by hand, to produce the pre-shaded
 vertices in the format expected by the mode (see the section
 *Shaded Vertex Format in Memory* in the specification for the layout of the
@@ -226,5 +226,6 @@ d50: err 0
 ```
 
 The Frame Buffer image is [here](/wip/images/d50.png). Notice the jagged
-appearance of the two sides of the triangles. A later tutorial attempts to
+appearance of the two sides of the triangle. A
+[later demo](/wip/post/2021/10/05/qpu-demo-triangle-with-msaa-4x/) attempts to
 reduce these aliasing artifacts by enabling MSAA 4x.
