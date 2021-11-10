@@ -110,7 +110,7 @@ The entries that are linked to a valid function are:
 
 The speed of the fan is controlled by PWM signals.
 
-The duty cycle of PWM wave is the fraction of the period during which the
+The duty cycle of a PWM wave is the fraction of its period during which the
 signal is active; the fan is supposed to set its speed according to that
 fraction. But notice (ON/OFF Data) that the polarity of the corresponding GPIO
 pin is reversed; the fan sets its speed according to the fraction of period
@@ -123,7 +123,8 @@ BIOS Information Table Specification. See the function `nvbios_perf_fan_parse`,
 [here](https://lxr.missinglinkelectronics.com/linux/drivers/gpu/drm/nouveau/nvkm/subdev/bios/perf.c). The value on my card happens to be `0x2b4 = 692`.
 
 To set the duty cycle to 31%, the value that needs to be programmed is
-`692 - (31 * 692 + 99) / 100 = 477 = 0x1dd`, or `692 - ceil(0.31 * 692) = 477`.
+`692 - (31 * 692 + 99) / 100 = 477 = 0x1dd`, or `692 - ceil(0.31 * 692) = 477`,
+or `floor(0.69 * 692) = 477`.
 
 To establish the duty cycle, set these values (the PWM divider and the duty
 cycle), as shown below, and then initiate an Enable control signal to activate
