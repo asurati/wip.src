@@ -111,11 +111,11 @@ The entries that are linked to a valid function are:
 The speed of the fan is controlled by PWM signals.
 
 The duty cycle of a PWM wave is the fraction of its period during which the
-signal is active; the fan is supposed to set its speed according to that
+signal is high; the fan is supposed to set its speed according to that
 fraction. But notice (ON/OFF Data) that the polarity of the corresponding GPIO
 pin is reversed; the fan sets its speed according to the fraction of period
-the signal is *not* active (in a conventional sense). Thus, to set a duty cycle
-of 31%, one must actually program the cycle value as 100 - 31 = 69%.
+the signal is low. The signal is treated as active low. Thus, to set a duty
+cycle of 31%, one must actually program the cycle value as 100 - 31 = 69%.
 
 The values to feed into the controller registers depend on PWM divider value.
 It is found by reading the [Performance Table](https://download.nvidia.com/open-gpu-doc/BIOS-Information-Table/1/BIOS-Information-Table.html#BIT_PERF_PTRS_v1) of the
