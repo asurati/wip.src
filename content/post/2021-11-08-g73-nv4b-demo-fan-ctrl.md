@@ -111,10 +111,10 @@ The entries that are linked to a valid function are:
 The speed of the fan is controlled by PWM signals.
 
 The duty cycle of a PWM wave is the fraction of its period during which the
-signal is high; the fan is supposed to set its speed according to that
-fraction. But notice (ON/OFF Data) that the polarity of the corresponding GPIO
-pin is reversed; the fan sets its speed according to the fraction of period
-the signal is low. The signal is treated as active low. Thus, to set a duty
+signal is high; the fan is supposed to run for that fraction of the period.
+But notice (ON/OFF Data) that the polarity of the corresponding GPIO
+pin is reversed; the fan runs for that fraction of period when the signal is
+low. That is, the signal is treated as active low. Thus, to set a duty
 cycle of 31%, one must actually program the cycle value as 100 - 31 = 69%.
 
 The values to feed into the controller registers depend on PWM divider value.
@@ -149,3 +149,9 @@ contains `0x1dd`, i.e. 31% duty cycle.
 The functions `nvkm_therm_fan_set_defaults` and `nvkm_fan_update`, both found
 [here](https://lxr.missinglinkelectronics.com/linux/drivers/gpu/drm/nouveau/nvkm/subdev/therm/fan.c), show how to gradually increase or decrease the fan speed over a 
 slow gradient.
+
+---
+
+The PWM divider value is 692. Assuming that PWM's input clock is the 27MHz
+crystal found on the card, the divider value generates PWM waves at a
+frequency of 27000/692 ~ 39KHz. That is equivalent to a period of 25.641 usecs.
