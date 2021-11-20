@@ -135,7 +135,12 @@ that the fan control is at GPIO pin #9.
 ```
 // Set the values.
 [0x15f8] = PWM Divider = 0x2b4
-[0x15f4] = Duty Cycle = 0x1dd
+
+// Prepare the duty cycle field to receive the new setting.
+t = [0x15f4]
+t &= ~0x7fffffff
+t |= 0x1dd
+[0x15f4] = t
 
 // Enable.
 [0x15f4] |= 0x80000000
