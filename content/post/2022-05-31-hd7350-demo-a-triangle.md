@@ -674,3 +674,210 @@ interp_xy	__.w, r0.x, param0.x	(t3 = v0.y + v10.y * i)
 ---
 
 ### **Command Buffer:**
+
+The Command Buffer consists of 612 words. They are broken down below into
+individual commands, in sequential order. The commands are encapsulated within
+GFX ring packets of type 3. The manuals have the format and meaning of various
+fields.
+
+The command buffer was extracted out of MESA when rendering the same triangle,
+using an OpenGL app. Then, the buffer was modified to suit the modest needs of
+this demo, and to fix the pointers to various resources.
+
+The buffer is sent to the GFX ring for execution as an Indirect Buffer.
+
+It is available, as a binary file, [here](/wip/data/cmdbuf.0.bin).
+Only some of the most interesting commands are dissected below.
+
+```
+. . .
+
+c0016900 SET_CONTEX_REG
+0000023c SQ_VTX_SEMANTIC_CLEAR
+ffffffff -> [SQ_VTX_SEMANTIC_CLEAR]
+	 Clears the FS-VS semantic table entries.
+
+. . .
+
+c0026900 SET_CONTEXT_REG
+00000090 PA_SC_GENERIC_SCISSOR_TL
+00000000 -> [PA_SC_GENERIC_SCISSOR_TL]
+40004000 -> [PA_SC_GENERIC_SCISSOR_BR]
+	 Defines the size of the Generic Scissor, by setting its top-left and
+	 bottom-right corners.
+
+. . .
+
+c0026900 SET_CONTEXT_REG
+0000000c PA_SC_SCREEN_SCISSOR_TL
+00000000 -> [PA_SC_SCREEN_SCISSOR_TL]
+40004000 -> [PA_SC_SCREEN_SCISSOR_BR]
+	 As above, but for the Screen Scissor.
+
+. . .
+
+c00d6900 SET_CONTEXT_REG
+00000318 CB_COLOR0_BASE
+00008000 -> [CB_COLOR0_BASE]. The Color Buffers's gpu_addr >> 256.
+0000009f -> [CB_COLOR0_PITCH].
+	 Width, in units of 8-pixels, minus one. Here, 720/8 - 1.
+0000383f -> [CB_COLOR0_SLICE].
+         The slice here is made up of the entire buffer. The dimensions of the
+	 slice, in the units of 8x8, minus one. Here, 1280 * 720 / 64 - 1.
+00000000
+010ae168 -> [CB_COLOR0_INFO]
+         .format	= COLOR_8_8_8_8;
+	 .array_mode	= ARRAY_LINEAR_ALIGNED;
+	 .number_type	= NUMBER_SRGB;
+	 .comp_swap	= SWAP_ALT;
+			  The frame buffer is in B8R8G8A8, or BGRA8888, or
+			  ARBG32 format. But when pixel color is exported, it
+			  is in the format XYZW=RGBA. Hence, we need to swap
+			  the channels such that XYZW=BGRA.
+	 .src_format	= EXPORT_4C_16BPC; Only one that is suitable.
+	 .fast_clear	= 1;
+	 .blend_clamp	= 1; Must be set for NUMBER_SRGB.
+00000010 -> [CB_COLOR0_ATTRIB]
+00000000 .non_disp_tiling_order = 1;
+	 Must be set since the Color Buffer is in a non-tiled format.
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+
+. . .
+
+c0026900 SET_CONTEXT_REG
+00000081 PA_SC_WINDOW_SCISSOR_TL
+00000000 -> [PA_SC_WINDOW_SCISSOR_TL] (0, 0)
+02d00500 -> [PA_SC_WINDOW_SCISSOR_BR] (1280, 720)
+
+. . .
+
+c0086d00 SET_RESOURCE
+00001ff8 Buffer_ID 0x1f, from the FS Resources Base (992).
+	 ((992 + 31) * 32) / 8.
+00004000 LSW(Buffer_Addr)
+00000047 sizeof(Buffer) - 1
+00001800 stride = 6 * 4, LSB(MSW(Buffer_Addr))
+00005440 Channel Selection. XYZ1
+00000000
+00000000
+00000000
+c0000000 Valid Buffer.
+
+. . .
+
+c0026900 SET_CONTEXT_REG
+000000e0 SQ_VTX_SEMANTIC_0
+00000090 -> [SQ_VTX_SEMANTIC_0]. Semantic ID for POSITION.
+00000092 -> [SQ_VTX_SEMANTIC_1]. Semantic ID for COLOR.
+
+. . .
+
+c0016900 SET_CONTEXT_REG
+0000030f PA_SC_AA_MASK
+01010101 -> [PA_SC_AA_MASK].
+	 Even with AA disabled, since the pixels are processed in 2x2 quad, we
+	 must enable Sample0 (the only sample when AA is disabled) for each of
+	 the 4 pixels.
+
+. . .
+
+c0016900 SET_CONTEXT_REG
+00000204 PA_CL_CLIP_CNTL
+00010000 .clip_disable = 1;
+
+. . .
+
+c0066900 SET_CONTEXT_REG
+0000010f PA_CL_VPORT_XCALE_0
+44200000 -> [PA_CL_VPORT_XSCALE_0] = 1280.0 / 2, in float.
+44200000 -> [PA_CL_VPORT_XOFFSET_0]
+c3b40000 -> [PA_CL_VPORT_YSCALE_0] = -720 / 2 (Note the Y-axis being flipped)
+43b40000 -> [PA_CL_VPORT_YOFFSET_0] = 720 / 2
+3f000000 -> [PA_CL_VPORT_ZSCALE_0] = 0.5
+3f000000 -> [PA_CL_VPORT_ZOFFSET_0]
+	 These are utilized when performing the ViewPort Transform.
+
+. . .
+
+c0016900 SET_CONTEXT_REG
+00000229 SQ_PGM_START_FS
+00000054 -> [SQ_PGM_START_FS] = fs_start_gpu_addr >> 256
+
+c0016900 SET_CONTEXT_REG
+00000191 SPI_PS_INPUT_CNTL_0
+00000092 -> [SPI_PS_INPUT_CNTL_0] = Semantic ID for the COLOR parameter.
+
+c0026900 SET_CONTEXT_REG
+000001b3 SPI_PS_IN_CONTROL_0
+10000001 -> [SPI_PS_IN_CONTROL_0]
+	 .num_interp = 1;
+	 .persp_gradient_ena = 1;
+
+. . .
+
+c0016900 SET_CONTEXT_REG
+00000213 SQ_PGM_EXPORTS_PS
+00000002 -> [SQ_PGM_EXPORTS_PS]. PS exports one Color (Buffer?).
+
+c0026900 SET_CONTEXT_REG
+00000210 SQ_PGM_START_PS
+00000058 -> [SQ_PGM_START_PS] = ps_start_gpu_addr >> 256
+00a00002 -> [SQ_PGM_RESOURCE_PS]
+	 .num_gprs = 2; The PS needs 2 GPRs to run.
+
+c00a6900 SET_CONTEXT_REG
+00000187 SPI_VS_OUT_ID_0
+00000092 -> [SPI_VS_OUT_ID_0].
+	 .semantic_0 = Semantic ID for the COLOR export.
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+
+c0016900 SET_CONTEXT_REG
+00000218 SQ_PGM_RESOURCES_VS
+00200103 -> [SQ_PGM_RESOURCES_VS]
+	 .num_gprs = 3; The VS needs 3 GPRs to run.
+	 .stack_size = 1; The VS needs 1 stack entry, for calling the FS.
+
+c0016900 SET_CONTEXT_REG
+00000206 PA_CL_VTE_CNTL
+0000003f -> [PA_CL_VTE_CNTL]. Enable ViewPort Transformation
+
+c0016900 SET_CONTEXT_REG
+00000217 SQ_PGM_START_VS
+00000050 -> [SQ_PGM_START_VS] = vs_start_gpu_addr >> 256
+
+. . .
+
+c0016800 SET_CONFIG_REG
+00000256 VGT_PRIMITIVE_TYPE
+00000004 -> [VGT_PRIMITIVE_TYPE] = DI_PT_TRILIST
+
+c0002f00 NUM_INSTANCE
+00000001
+
+c0012d00 DRAW_INDEX_AUTO
+00000003 # of vertices
+00000002 VGT should generate indices (as no Index Buffer has been setup)
+
+c0016800 SET_CONFIG_REG
+00000010 WAIT_UNTIL
+00008000 -> [WAIT_UNTIL]. Wait for the 3D engine to become idle.
+
+c0034300 SURFACE_SYNC
+02000040 CB0_DEST_BASE_ENA, CB_ACTION_ENA
+00003840 Size of the Color Buffer in units of 256 bytes.
+00008000 cb_gpu_addr >> 25
+0000000a
+---
