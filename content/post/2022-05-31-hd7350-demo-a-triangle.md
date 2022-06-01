@@ -14,14 +14,16 @@ tags:
 
 *Warning: Improperly programming a GPU, or a display, may damage the devices.*
 
-This post demonstrates setting up a HD7350 to draw a triangle. The approach
-adopted here is that of choosing bare-metal programming over relying on
-established interfaces like the Linux DRM. That is not to say that Linux DRM
+This post demonstrates setting up a HD7350 pipeline to draw a triangle.
+The approach adopted here is that of choosing bare-metal programming over
+relying on established interfaces like the Linux DRM.
+That is not to say that Linux DRM
 cannot be used - it is possible to send compute or rendering commands to the
-GPU by directly interfacing with the DRM layer on Linux.
+GPU by directly interfacing with the DRM layer on Linux, or by moving up to an
+even higher abstraction provided by OpenGL/Vulkan APIs.
 
 The bare-metal program maps the PCIe BARs, POSTs the Video BIOS, configures and
-tests the rings (GFX, DMA, INT), parses the EDID blocks of the attached
+tests the GPU rings (GFX, DMA, INT), parses the EDID blocks of the attached
 display, and configures the GPU HW blocks (CRTCs, ENCODERs, TRANSMITTERs)
 for running the display at the preferred resolution. The Linux `radeon` driver
 and the AMD manuals provide the details on the steps required.
@@ -123,7 +125,7 @@ All shaders begin their execution with an instruction of type
 
 ---
 
-##### **VS[0]:**
+#### **VS[0]:**
 
 ```
 PC| Offset|   CF_WORD0|   CF_WORD1|
@@ -139,14 +141,14 @@ b| wqm|      inst| eop| vpm| rsvd|   count| cond|  const| pop|
 
 |Field|Value|Comment|
 |-----:|-----:|-------|
-|`addr`|`0`| The `inst` field shows that this is a `CF_INST_CALL_FS` instruction. Hence, this `addr` field is a PC, relative to the start of the FS, that the GPU should call.
+|`addr`|`0`| The `inst` field shows that this is a `CF_INST_CALL_FS` instruction. Hence, this `addr` field is a PC, relative to the start of the FS, that the GPU should call. The GPU pushes the return address (the address of the instruction next to this one) onto a stack; the FS executes `CF_INST_RETURN` when it wants to return.
 |`count`|`1`| The increment to apply to Call Nesting Counter. Used to avoid reaching a call-nesting of unsupported depths.
-|`inst`|`0x13`| The opcode for `CF_INST_CALL_FS`.
+|`inst`|`0x13`| `CF_INST_CALL_FS`.
 |`b`|`1`| Barrier. Wait for other CF instructions to complete before beginning this one.
 
 ---
 
-##### **VS[1]:**
+#### **VS[1]:**
 
 The `inst` field of this CF instruction is `0x54`, which stands for
 `CF_INST_EXPORT_DONE`. This information suggests that the current instruction
@@ -172,18 +174,19 @@ b| m|      inst| eop| vpm| count| rsvd| sel_w| sel_z| sel_y| sel_x|
 |`array_base`|`0x3c`| Position Index. Must be `0x3c == 60` when exporting the POSITION property (see `type` below) of a vertex.
 |`type`|`1`| `EXPORT_POS`.
 |`rw_gpr`|`1`| The register#, `R1`, that contains the POSITION, and acts as the source register for the export. As described later, the semantic table guides the FS into placing the POSITION property of a vertex into the `R1` register.
-|`sel_x`|`0`| The X channel (`sel_x`) of the XYZW vector being exported must be sourced from the X channel (= `0`) of the source register.
-|`sel_y`|`1`| The Y channel (`sel_y`) of the XYZW vector being exported must be sourced from the Y channel (= `1`) of the source register.
+|`sel_x`|`0`| The X (`sel_x`) channel of the XYZW vector being exported must be sourced from the channel `0` of the source register, i.e. `R1.X`.
+|`sel_y`|`1`| The Y (`sel_y`) channel of the XYZW vector being exported must be sourced from the channel `1` of the source register, i.e. `R1.Y`.
 |`sel_z`|`2`| . . .
 |`sel_w`|`3`| . . .
 |`count`|`0`| The number of POSITIONs exported, minus one.
-|`inst`|`0x54`| `CF_INST_EXPORT_DONE`. The `DONE` suffix suggests that this is the last (and, in this case, the only) POSITION being exported.
+|`inst`|`0x54`| `CF_INST_EXPORT_DONE`. The `DONE` suffix suggests that this is the last (and, in this case, the only one) of all the POSITIONs being exported.
 
 ---
 
-##### **VS[1]:**
+#### **VS[2]:**
 
-Similar to the one directly above, but exports COLOR parameter.
+Similar to the one directly above, but exports one PARAMETER: the COLOR
+parameter.
 
 ```
 PC| Offset| CF_ALLOC_EXPORT_WORD0| CF_ALLOC_EXPORT_WORD1_SWIZ|
@@ -199,8 +202,141 @@ b| m|      inst| eop| vpm| count| rsvd| sel_w| sel_z| sel_y| sel_x|
 
 |Field|Value|Comment|
 |-----:|-----:|-------|
-|`array_base`|`0`| Parameter Index. Must be 0 for the first (and, in this case, the only) PARAMETER being exported. The strict sequence (0, 1, 2, etc..) seems to be necessary if the PS relies on *Direct Parameter Reads*, which are hardware-supported.
+|`array_base`|`0`| Parameter Index. Must be 0 for the first (and, in this case, the only) PARAMETER being exported. The strict sequence (0, 1, 2, etc..) seems to be necessary if the PS relies on *Direct Parameter Reads* that support hardware-assisted addressing of the Parameter Cache.
 |`type`|`2`| `EXPORT_PARAM`.
 |`rw_gpr`|`2`| The register#, `R2`, that contains the COLOR parameter, and acts as the source register for the export. As described later, the semantic table guides the FS into placing the COLOR parameter of a vertex into the `R2` register.
 |`count`|`0`| The number of PARAMETERs exported, minus one.
-|`inst`|`0x54`| `CF_INST_EXPORT_DONE`. The `DONE` suffix suggests that this is the last (and, in this case, the only) PARAMETER being exported.
+|`eop`|`1`| End Of this Program.
+|`inst`|`0x54`| `CF_INST_EXPORT_DONE`. The `DONE` suffix suggests that this is the last (and, in this case, the only one) of all the PARAMETERs being exported.
+
+---
+
+### **Fetch Shader:**
+
+As can be seen below, the FS consists of two types of instructions: the CF
+instructions that begin the FS, which are 64-bit instructions, and the VFC
+(Vertex Fetch Clause) instructions, which are 128-bit instructions. The PC
+still remains displayed in 64-bit units, however. As before, the PC and the
+Offset both are relative to the start of the FS.
+
+```
+02 00 00 00 00 04 80 80  00 00 00 00 00 00 00 85
+01 1f 00 30 90 10 15 4c  00 00 00 00 00 00 00 00
+01 1f 00 30 92 10 15 4c  0c 00 00 00 00 00 00 00
+
+PC| Offset|     Instruction Words
+--+-------+--------------------------------------------
+ 0|   0x00| 0x00000002 0x80800400
+ 1|   0x08| 0x00000000 0x85000000
+ 2|   0x10| 0x30001f01 0x4c151090 0x00000000 0x00000000
+ 4|   0x20| 0x30001f01 0x4c151092 0x0000000c 0x00000000
+```
+
+---
+
+#### **FS[0]:**
+
+```
+PC| Offset|   CF_WORD0|   CF_WORD1|
+--+-------+-----------+-----------+
+ 0|   0x00| 0x00000002| 0x80800400|
+
+   res| jts|                          addr|
+0 0000| 000| 0000 0000 0000 0000 0000 0010|
+
+b| wqm|      inst| eop| vpm| rsvd|   count| cond|  const| pop|
+1|   0| 0000 0010|   0|   0| 0000| 00 0001|   00| 0 0000| 000|
+```
+
+|Field|Value|Comment|
+|-----:|-----:|-------|
+|`addr`|`0`| The `inst` field shows that this is a `CF_INST_VC` instruction. Hence, this `addr` field is a PC, relative to the start of this shader, where begins a Vertex Fetch Clause.
+|`count`|`1`| The number of instructions in the clause, minus one. There are 2 instructions in the VFC clause that follows. Note that this count hides the fact that the clause instructions are 128-bit each, while the PC, by being even and by being incremented twice when running the clause, does not. This instruction is can be thought of as a stack-less call; the GPU jumps to the clause, executes `count` number of clause instructions, and then returns back to the instruction next to this.
+|`inst`|`2`| `CF_INST_VC`.
+
+---
+
+#### **FS[1]:**
+
+```
+PC| Offset|   CF_WORD0|   CF_WORD1|
+--+-------+-----------+-----------+
+ 0|   0x00| 0x00000000| 0x85000000|
+
+   res| jts|                          addr|
+0 0000| 000| 0000 0000 0000 0000 0000 0000|
+
+b| wqm|      inst| eop| vpm| rsvd|   count| cond|  const| pop|
+1|   0| 0001 0100|   0|   0| 0000| 00 0000|   00| 0 0000| 000|
+```
+
+|Field|Value|Comment|
+|-----:|-----:|-------|
+|`inst`|`0x14`| `CF_INST_RETURN`. Return back to the VS.
+
+---
+
+#### **FS[2], VFC[0]:**
+
+This is a Vertex Fetch Clause instruction, particulary a fetch instruction
+depending on the FS-VS semantic table to determine the register that is to
+receive the fetched information.
+
+```
+PC| Offset|  VTX_WORD0|  VTX_WORD1_SEM|  VTX_WORD2|     ZEROES|
+--+-------+-----------+---------------+-----------+-----------+
+ 2|   0x10| 0x30001f01|     0x4c151090| 0x00000000| 0x00000000|
+
+    mfc| ssx| sr|  src_gpr|    buf_id| fwq| ft|   inst|
+00 1100|  00|  0| 000 0000| 0001 1111|   0| 00| 0 0001|
+
+sma| fca| nfa|     fmt| ucf| dsw| dwz| dwy| dwx| rsvd|    sem_id|
+  0|   1|  00| 11 0000|   0| 101| 010| 001| 000|    0| 1001 0000|
+
+       rsvd| bim| alt_const| mf| cbns| es|              offset|
+0 0000 0000|  00|         0|  0|    0| 00| 0000 0000 0000 0000|
+```
+
+|Field|Value|Comment|
+|-----:|-----:|-------|
+|`inst`|`1`| `VC_FETCH_SEMANTIC`. Fetch vertex property, relying on the FS-VS semantic table to direct the fetched property into appropriate register.
+|`ft`|`0`| `VTX_FETCH_VERTEX_DATA`. Pass the vertexID (and not the instanceID) to identify the entity for which the fetch is being performed.
+|`buf_id`|`0x1f`| Index into the MMIO Resource/Constant Descriptor Table. Each entry in the table is 32-bytes, and provides information on the address and size of the buffer from which to fetch.
+|`src_gpr`|`0`| The vertexID is found in `R0`. The Shader Pipe Interpolator (SPI) places vertexID into `R0.X` before calling the VS.
+|`ssx`|'0'| The vertexID is found in the X channel of the Source GPR.
+|`sem_id`|`0x90`| Programmer-defined semanticID that identifies the vertex property being fetched and also the destination GPR that FS should write into. In this demo, it identifies the POSITION property, and the `R1` register. See the contents of the FS-VS semantic table in the command buffer description, later.
+|`dsx`|`0`| Destination GPR's X (`dsx`) channel should be filled with the fetched vector's 0 (`X`)
+|`dsy`|`1`| Destination GPR's Y (`dsy`) channel should be filled with the fetched vector's 1 (`Y`)
+|`dsz`|`2`| Destination GPR's Z (`dsz`) channel should be filled with the fetched vector's 2 (`Z`)
+|`dsw`|`5`| Destination GPR's W (`dsw`) channel should be filled with `1.0`. This is because we only define XYZ co-ordinates for each vertex in the Vertex Buffer, so the `W` channel is absent in the buffer. Moreover, since we disable Clipping, the co-ordinates are taken to be already in the Normalized Device Coordinate space. This channel seems to be ignored under the sparse settings established by this demo. Nevertheless, set it as if the Perspective Divide has been already performed.
+|`fmt`|`0x30`| `FMT_32_32_32_FLOAT`. The XYZ channels of a vertex position is in 4-byte floats.
+|`nfa`|`0`| `NUM_FORMAT_NORM`. A fraction between [0,1] if unsigned, or between [-1,1] if signed. Note that the demo passes NDCs to the GPU.
+|`fca`|`1`| `FORMAT_COMP_SIGNED`. Signed numbers. See also `nfa`.
+|`offset`|`0`| Byte offset into the Vertex Buffer, from where to begin fetching this vertex property.
+
+---
+
+#### **FS[4], VFC[1]:**
+
+Similar to above, but fetches COLOR parameter.
+
+```
+PC| Offset|  VTX_WORD0|  VTX_WORD1_SEM|  VTX_WORD2|     ZEROES|
+--+-------+-----------+---------------+-----------+-----------+
+ 2|   0x10| 0x30001f01|     0x4c151092| 0x0000000c| 0x00000000|
+
+    mfc| ssx| sr|  src_gpr|    buf_id| fwq| ft|   inst|
+00 1100|  00|  0| 000 0000| 0001 1111|   0| 00| 0 0001|
+
+sma| fca| nfa|     fmt| ucf| dsw| dwz| dwy| dwx| rsvd|    sem_id|
+  0|   1|  00| 11 0000|   0| 101| 010| 001| 000|    0| 1001 0010|
+
+       rsvd| bim| alt_const| mf| cbns| es|              offset|
+0 0000 0000|  00|         0|  0|    0| 00| 0000 0000 0000 1100|
+```
+
+|Field|Value|Comment|
+|-----:|-----:|-------|
+|`sem_id`|`0x92`| Programmer-defined semanticID that identifies the vertex property being fetched and also the destination GPR that FS should write into. In this demo, it identifies the COLOR parameter, and the `R2` register. See the contents of the FS-VS semantic table in the command buffer description, later.
+|`dsw`|`5`| Destination GPR's W (`dsw`) channel should be filled with `1.0`. This is because we only define RGB values for the COLOR parameter of each vertex in the Vertex Buffer, so the `W`, i.e. the Alpha, channel is absent in the buffer. Set it to 1.0 (completely opaque).
+|`offset`|`0xc`| Byte offset into the Vertex Buffer, from where to begin fetching this vertex property. The previous property was POSITION, and was of size `4 * 3 = 12` bytes. The COLOR property immediately follows it, for each vertex.
