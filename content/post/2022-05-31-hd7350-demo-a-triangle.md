@@ -716,7 +716,7 @@ c0026900 SET_CONTEXT_REG
 
 c00d6900 SET_CONTEXT_REG
 00000318 CB_COLOR0_BASE
-00008000 -> [CB_COLOR0_BASE]. The Color Buffers's gpu_addr >> 256.
+00008000 -> [CB_COLOR0_BASE]. The Color Buffers's gpu_addr >> 8.
 0000009f -> [CB_COLOR0_PITCH].
 	 Width, in units of 8-pixels, minus one. Here, 720/8 - 1.
 0000383f -> [CB_COLOR0_SLICE].
@@ -803,7 +803,7 @@ c3b40000 -> [PA_CL_VPORT_YSCALE_0] = -720 / 2 (Note the Y-axis being flipped)
 
 c0016900 SET_CONTEXT_REG
 00000229 SQ_PGM_START_FS
-00000054 -> [SQ_PGM_START_FS] = fs_start_gpu_addr >> 256
+00000054 -> [SQ_PGM_START_FS] = fs_start_gpu_addr >> 8
 
 c0016900 SET_CONTEXT_REG
 00000191 SPI_PS_INPUT_CNTL_0
@@ -823,7 +823,7 @@ c0016900 SET_CONTEXT_REG
 
 c0026900 SET_CONTEXT_REG
 00000210 SQ_PGM_START_PS
-00000058 -> [SQ_PGM_START_PS] = ps_start_gpu_addr >> 256
+00000058 -> [SQ_PGM_START_PS] = ps_start_gpu_addr >> 8
 00a00002 -> [SQ_PGM_RESOURCE_PS]
 	 .num_gprs = 2; The PS needs 2 GPRs to run.
 
@@ -846,7 +846,7 @@ c0016900 SET_CONTEXT_REG
 
 c0016900 SET_CONTEXT_REG
 00000217 SQ_PGM_START_VS
-00000050 -> [SQ_PGM_START_VS] = vs_start_gpu_addr >> 256
+00000050 -> [SQ_PGM_START_VS] = vs_start_gpu_addr >> 8
 
 . . .
 
