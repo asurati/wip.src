@@ -43,7 +43,7 @@ Since its release, the AMD GPU microarchitectures have progressed, to RDNA 3 at
 present, through TeraScale 3, GCN 1-5, RDNA and RDNA 2. The card is indeed old.
 
 It has a single [DMS-59](https://en.wikipedia.org/wiki/DMS-59) port. A
-DMS-59-to-dual-DVI break-out cable exposes the more prevalent DVI outputs. A
+DMS-59-to-dual-DVI break-out cable exposes the more prevelant DVI outputs. A
 DVI-to-HDMI cable connects one of those DVI outputs to a cheap USB-based HDMI
 Video Capture device. The video-capture device appears to the GPU as a display.
 
@@ -279,7 +279,7 @@ b| wqm|      inst| eop| vpm| rsvd|   count| cond|  const| pop|
 
 #### **FS[2], VFC[0]:**
 
-This is a Vertex Fetch Clause instruction, particularly a fetch instruction
+This is a Vertex Fetch Clause instruction, particulary a fetch instruction
 depending on the FS-VS semantic table to determine the register that is to
 receive the fetched information.
 
@@ -346,7 +346,7 @@ sma| fca| nfa|     fmt| ucf| dsw| dwz| dwy| dwx| rsvd|    sem_id|
 
 ### **Pixel Shader:**
 
-Just as there is a support for semantic independence between the FS and the VS,
+Just as there is a support for semantic indepedence between the FS and the VS,
 there is a similar support provided between the VS and the FS. But, the
 PARAMETER exports from the VS do not go into GPRs - they go to the Parameter
 Cache. The layout of the exported parameters are available in the documents.
@@ -448,7 +448,7 @@ b| m|      inst| eop| vpm| count| rsvd| sel_w| sel_z| sel_y| sel_x|
 |`array_base`|`0`| The index of the Color Buffer to export into. Color Buffer #0 is the one that the GPU is setup to display.
 |`type`|`0`| `EXPORT_PIXEL`.
 |`rw_gpr`|`1`| The register#, `R1`, that contains the COLOR property, and acts as the source register for the export. The ALU clause that this instruction initiates interpolates the COLOR property for the current fragment, and stores the resultant color in `R1`.
-|`sel_w`|`5`| The W (`sel_w`) (i.e. the Alpha) channel of the XYZW vector being exported must be set to `1.0`. Note that when VS exported the COLOR property for each vertex, it set Alpha to `1.0`, but that was not the property of a *fragment*. Here in the PS, each fragment is shaded; not setting Alpha to `1.0` here causes the GPU to pick-up random/left-over values for the Alpha channel. That causes unwanted transparency effects. Hence, set the Alpha channel to 1.0 for each fragment.
+|`sel_w`|`5`| The W (`sel_w`) (i.e. the Alpha) channel of the XYZW vector being exported must be set to `1.0`. Note that when VS exported the COLOR property for each vertex, it set Alpha to `1.0`, but that was not the property of a *fragment*. Here in the PS, each fragment is shaded; not setting Alpha to `1.0` here causes the GPU to pick-up randeom/left-over values for the Alpha channel. That causes unwanted transparency effects. Hence, set the Alpha channel to 1.0 for each fragment.
 |`count`|`0`| The number of Color Buffers to which this pixel is being exported, minus one. (Verify this)
 |`eop`|`1`| End Of this Program.
 |`inst`|`0x54`| `CF_INST_EXPORT_DONE`. The `DONE` suffix suggests that this is the last (and, in this case, the only one) of all the Color Buffers to which this pixel is being exported.
@@ -482,7 +482,7 @@ channel. That is, the ALU instruction in the X slot can write to no other
 channel except X, etc. (This limitation doesn't apply to the T unit).
 
 The two `INTERP_Z` instructions interpolate the Z channel; These two
-instructions must be allotted the ZW slots in the instruction group.
+instructions must be alloted the ZW slots in the instruction group.
 
 The four `INTERP_XY` instructions, which form another instruction group,
 interpolate both X and Y channels. The X channel is interpolated by the
@@ -540,7 +540,7 @@ c| dc| dr|  dst_gpr|  bs|          inst| omod| wm|up|uem|s1a|s0a|
 |`s0c`|`0`| Select the X channel of `src0`. `R0.X` contains the I co-ordinate.
 |`l`|`1`| This is the last instruction in the current instruction group.
 |`wm`|`0`| Do not write the destination register. However, the result of this instruction is forwarded to the DOT half (the instruction above).
-|`dc`|`3`| Select the `W` channel of the destination register. Although the destination register is not written by this instruction, proper setting of `dst_gpr` and `dc` is required for correct forwarding of the result. Since this instruction is the MAD half of the `INTERP_Z` operation, it must set the destination channel to `W`.
+|`dc`|`3`| Select the `W` channel of the destination register. Although the destination register is not writte by this instruction, proper setting of `dst_gpr` and `dc` is required for correct forwarding of the result. Since this instruction is the MAD half of the `INTERP_Z` operation, it must set the destination channel to `W`.
 
 ---
 
@@ -647,7 +647,7 @@ c| dc| dr|  dst_gpr|  bs|          inst| omod| wm|up|uem|s1a|s0a|
 |-----:|-----:|-------|
 |`s0s`|`0`| The first source, `src0` is the `R0` register. It contains the I/J co-ordinates.
 |`s0c`|`0`| Select the X channel of `src0`. `R0.X` contains the I co-ordinate.
-|`wm`|`0`| Do not write to the destination register. Since this is the MAD half of the Y-interpolation, it forwards its result to the DOT half, i.e. the instruction in the Z-slot. For proper forwarding, this instruction must still select the correct destination register and channel.
+|`wm`|`0`| Do not write to the destination register. Since this is the MAD half of the Y-interpolation, it forwards its result to the DOT half, i.e. the instruction in the Z-slot. For proper forwarding, this instruction must still select the corret destination register and channel.
 |`dst_gpr`|`1`| `R1` is the destination register.
 |`dc`|`3`| Select the `W` channel of the destination register.
 
