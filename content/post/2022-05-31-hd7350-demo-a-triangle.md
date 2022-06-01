@@ -650,8 +650,8 @@ c| dc| dr|  dst_gpr|  bs|          inst| omod| wm|up|uem|s1a|s0a|
 |`dc`|`3`| Select the `W` channel of the destination register.
 
 The entire interpolation of the XYZ coordinates of the COLOR parameter can be
-understood as shown below, with `R1.XYZ` containing the interpolated COLOR
-channels:
+understood as shown below, with `R1.XYZ` containing the resultant interpolated
+COLOR channels:
 
 ```
 interp_z	r1.z, r0.y, param0.x	(r1.z = t0 + v20.z * j)
