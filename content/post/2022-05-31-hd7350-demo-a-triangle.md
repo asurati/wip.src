@@ -39,8 +39,6 @@ Graphics (GFX) ring.
 
 The [HD7350](https://en.wikipedia.org/wiki/Ati_gpu#Radeon_7000_series) is a
 member, named Cedar, of the VLIW-5 TeraScale 2 Evergreen family of the AMD GPUs.
-Since its release, the AMD GPU microarchitectures have progressed, to RDNA 3 at
-present, through TeraScale 3, GCN 1-5, RDNA and RDNA 2. The card is indeed old.
 
 It has a single [DMS-59](https://en.wikipedia.org/wiki/DMS-59) port. A
 DMS-59-to-dual-DVI break-out cable exposes the more prevalent DVI outputs. A
