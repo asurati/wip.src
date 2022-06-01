@@ -675,7 +675,7 @@ interp_xy	__.w, r0.x, param0.x	(t3 = v0.y + v10.y * i)
 
 ### **Command Buffer:**
 
-The Command Buffer consists of 612 words. They are broken down below into
+The Command Buffer consists of 613 words. They are broken down below into
 individual commands, in sequential order. The commands are encapsulated within
 GFX ring packets of type 3. The manuals have the format and meaning of various
 fields.
@@ -686,8 +686,8 @@ this demo, and to fix the pointers to various resources.
 
 The buffer is sent to the GFX ring for execution as an Indirect Buffer.
 
-It is available, as a binary file, [here](/wip/data/cmdbuf.0.bin).
-Only some of the most interesting commands are dissected below.
+It is available, as a binary file, [here](/wip/data/eg.cmds.0.bin).
+Only some of the most obvious commands are shown below.
 
 ```
 . . .
@@ -725,7 +725,7 @@ c00d6900 SET_CONTEXT_REG
          The slice here is made up of the entire buffer. The dimensions of the
 	 slice, in the units of 8x8, minus one. Here, 1280 * 720 / 64 - 1.
 00000000
-010ae168 -> [CB_COLOR0_INFO]
+0108e168 -> [CB_COLOR0_INFO]
          .format	= COLOR_8_8_8_8;
 	 .array_mode	= ARRAY_LINEAR_ALIGNED;
 	 .number_type	= NUMBER_SRGB;
@@ -735,7 +735,6 @@ c00d6900 SET_CONTEXT_REG
 			  is in the format XYZW=RGBA. Hence, we need to swap
 			  the channels such that XYZW=BGRA.
 	 .src_format	= EXPORT_4C_16BPC; Only one that is suitable.
-	 .fast_clear	= 1;
 	 .blend_clamp	= 1; Must be set for NUMBER_SRGB.
 00000010 -> [CB_COLOR0_ATTRIB]
 00000000 .non_disp_tiling_order = 1;
@@ -834,15 +833,8 @@ c00a6900 SET_CONTEXT_REG
 00000187 SPI_VS_OUT_ID_0
 00000092 -> [SPI_VS_OUT_ID_0].
 	 .semantic_0 = Semantic ID for the COLOR export.
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
+
+. . .
 
 c0016900 SET_CONTEXT_REG
 00000218 SQ_PGM_RESOURCES_VS
@@ -880,4 +872,26 @@ c0034300 SURFACE_SYNC
 00003840 Size of the Color Buffer in units of 256 bytes.
 00008000 cb_gpu_addr >> 25
 0000000a
+```
+
 ---
+
+### **Output:**
+
+A screen capture from OBS Studio may result in an image file that has been
+processed by the OBS Studio, and so may not represent the actual frame-buffer
+contents. Instead, QEMU's `pmemsave` command is used to dump the frame-buffer.
+These raw pixels are then converted to a PNG image with the help of
+ImageMagick: `convert -size 1280x720 -depth 8 BGRA:raw.bin eg.0.png`.
+
+The image is available [here](/wip/images/eg.0.png). The vertex buffer that was
+provided to the GPU was:
+
+```
+static const float verts[] = {
+	/* positions */		/* colors */
+	0.9, -0.9, 0,		1, 0, 0,	/* BR */
+	-0.9, -0.9, 0,		0, 0, 1,	/* BL */
+	0.0,  0.9, 0,		0, 1, 0		/* T */
+};
+```
