@@ -68,8 +68,9 @@ Microcode](https://developer.amd.com/wordpress/media/2012/10/AMD_Evergreen-Famil
 * [Radeon R5xx Acceleration](http://developer.amd.com/wordpress/media/2013/10/R5xx_Acceleration_v1.5.pdf)
 * [R600/R700/Evergreen Assembly Language Format](https://developer.amd.com/wordpress/media/2012/10/R600-R700-Evergreen_Assembly_Language_Format.pdf)
 * [Radeon R6xx/R7xx Acceleration](http://developer.amd.com/wordpress/media/2013/10/R6xx_R7xx_3D.pdf)
-* [Radeon Sea Islands 3D/Compute Register Reference Guide](CIK_3D_registers_v2.pdf)
-* [Radeon Southern Islands 3D/Compute Register Reference Guide](SI_3D_registers.pdf)
+* [Radeon R6xx/R7xx 3D Register Reference Guide](https://developer.amd.com/wordpress/media/2013/10/R6xx_3D_Registers.pdf)
+* [Radeon Sea Islands 3D/Compute Register Reference Guide](http://developer.amd.com/wordpress/media/2013/10/CIK_3D_registers_v2.pdf)
+* [Radeon Southern Islands 3D/Compute Register Reference Guide](https://developer.amd.com/wordpress/media/2013/10/SI_3D_registers.pdf)
 
 ---
 
@@ -191,7 +192,7 @@ parameter.
 ```
 PC| Offset| CF_ALLOC_EXPORT_WORD0| CF_ALLOC_EXPORT_WORD1_SWIZ|
 --+-------+----------------------+---------------------------+
- 1|   0x08|            0x00014000|                 0x95200688|
+ 2|   0x10|            0x00014000|                 0x95200688|
 
 es|   ix_gpr| rw_rel|   rw_gpr| type|       array_base|
 00| 000 0000|      0| 000 0010|   10| 0 0000 0000 0000|
@@ -261,7 +262,7 @@ b| wqm|      inst| eop| vpm| rsvd|   count| cond|  const| pop|
 ```
 PC| Offset|   CF_WORD0|   CF_WORD1|
 --+-------+-----------+-----------+
- 0|   0x00| 0x00000000| 0x85000000|
+ 1|   0x08| 0x00000000| 0x85000000|
 
    res| jts|                          addr|
 0 0000| 000| 0000 0000 0000 0000 0000 0000|
@@ -323,7 +324,7 @@ Similar to above, but fetches COLOR parameter.
 ```
 PC| Offset|  VTX_WORD0|  VTX_WORD1_SEM|  VTX_WORD2|     ZEROES|
 --+-------+-----------+---------------+-----------+-----------+
- 2|   0x10| 0x30001f01|     0x4c151092| 0x0000000c| 0x00000000|
+ 4|   0x20| 0x30001f01|     0x4c151092| 0x0000000c| 0x00000000|
 
     mfc| ssx| sr|  src_gpr|    buf_id| fwq| ft|   inst|
 00 1100|  00|  0| 000 0000| 0001 1111|   0| 00| 0 0001|
@@ -340,3 +341,336 @@ sma| fca| nfa|     fmt| ucf| dsw| dwz| dwy| dwx| rsvd|    sem_id|
 |`sem_id`|`0x92`| Programmer-defined semanticID that identifies the vertex property being fetched and also the destination GPR that FS should write into. In this demo, it identifies the COLOR parameter, and the `R2` register. See the contents of the FS-VS semantic table in the command buffer description, later.
 |`dsw`|`5`| Destination GPR's W (`dsw`) channel should be filled with `1.0`. This is because we only define RGB values for the COLOR parameter of each vertex in the Vertex Buffer, so the `W`, i.e. the Alpha, channel is absent in the buffer. Set it to 1.0 (completely opaque).
 |`offset`|`0xc`| Byte offset into the Vertex Buffer, from where to begin fetching this vertex property. The previous property was POSITION, and was of size `4 * 3 = 12` bytes. The COLOR property immediately follows it, for each vertex.
+
+---
+
+### **Pixel Shader:**
+
+Just as there is a support for semantic indepedence between the FS and the VS,
+there is a similar support provided between the VS and the FS. But, the
+PARAMETER exports from the VS do not go into GPRs - they go to the Parameter
+Cache. The layout of the exported parameters are available in the documents.
+
+It seems that the Parameter Cache fills itself starting at its base; so any
+semantic mapping which does not start parameter allocations at the base of the
+cache, but which nudges the automatic hardware addressing facility to try and
+attempt 'random accesses' into the cache, fail. As a result, this demo keeps
+the semantic mapping simple: VS export of the COLOR parameter is associated
+with the 0th entry in the VS-PS semantic table. If there were another parameter
+being exported by the VS, it would have been associated with the 1st entry, and
+so on. The driver in MESA too follows the same consecutive assignment.
+
+As with FS-VS semantic table, the command buffer is the place where the VS-PS
+semantic table is setup.
+
+```
+02 00 00 00 00 00 14 a0  00 80 00 00 88 0a 20 95
+00 04 38 00 90 6c 34 40  00 00 38 80 80 6c 34 60
+00 04 38 00 10 6b 34 00  00 00 38 00 10 6b 34 20
+00 04 38 00 00 6b 34 40  00 00 38 80 00 6b 34 60
+
+PC| Offset|     Instruction Words
+--+-------+----------------------
+ 0|   0x00| 0x00000002 0xa0140000
+ 1|   0x08| 0x00008000 0x95200a88
+ 2|   0x10| 0x00380400 0x40346c90
+ 3|   0x18| 0x80380000 0x60346c80
+ 4|   0x20| 0x00380400 0x00346b10
+ 5|   0x28| 0x00380000 0x20346b10
+ 6|   0x30| 0x00380400 0x40346b00
+ 7|   0x38| 0x80380000 0x60346b00
+```
+
+---
+
+#### **PS[0]:**
+
+The `inst` field of this CF instruction is `0x81`. This isn't the usual CF
+instructions, or the Alloc, Export, Import CF instruction, (check if there are
+other types to remove ambiguity), as this value isn't defined.
+
+The instruction belongs to the group of CF instructions that begin an ALU
+clause. The `inst` field is shorter, and its value here turns out to be `0x8`,
+which represents the `CF_INST_ALU` instruction.
+
+Note also that *CF ALU* instructions are *Control Flow* instructions used to
+initiate ALU clauses, while the *ALU* instructions belong only to the ALU
+clauses.
+
+```
+PC| Offset|   CF_ALU_WORD0|   CF_ALU_WORD1|
+--+-------+---------------+---------------+
+ 0|   0x00|     0x00000002|     0xa0140000|
+
+km0|  kb1|  kb0|                        addr|
+ 00| 0000| 0000| 00 0000 0000 0000 0000 0010|
+
+b| wqm| inst| alt_const|    count|       ka1|      ka0| km1|
+1|   0| 1000|         0| 000 0101| 0000 0000|0000 0000|  00|
+```
+
+The KCACHE fields are not relevant here; they are used to access Constant
+Buffers (Uniforms), for which this demo has no need. Also note that ALU clause
+instructions are 64-bits, while the Vertex Fetch Clause instructions are
+128-bits.
+
+|Field|Value|Comment|
+|-----:|-----:|-------|
+|`addr`|`2`| The PC of the clause to execute, relative to the start of this shader.
+|`count`|`5`| The number of instructions to execute in the clause, minus one.
+|`inst`|`8`| `CF_INST_ALU`.
+
+As with execution of other types of clauses, the GPU, before moving on to the
+next instruction in the program order, jumps to the clause found at `addr` PC,
+and executes `count + 1` number of instructions.
+
+---
+
+#### **PS[1]:**
+
+The `inst` field of this CF instruction is `0x54`, or `CF_INST_EXPORT_DONE` -
+one of the CF instruction types, seen above in the VS.
+
+```
+PC| Offset| CF_ALLOC_EXPORT_WORD0| CF_ALLOC_EXPORT_WORD1_SWIZ|
+--+-------+----------------------+---------------------------+
+ 1|   0x08|            0x00008000|                 0x95200a88|
+
+es|   ix_gpr| rw_rel|   rw_gpr| type|       array_base|
+00| 000 0000|      0| 000 0001|   00| 0 0000 0000 0000|
+
+b| m|      inst| eop| vpm| count| rsvd| sel_w| sel_z| sel_y| sel_x|
+1| 0| 0101 0100|   1|   0|  0000| 0000|   101|   010|   001|   000|
+```
+
+|Field|Value|Comment|
+|-----:|-----:|-------|
+|`array_base`|`0`| The index of the Color Buffer to export into. Color Buffer #0 is the one that the GPU is setup to display.
+|`type`|`0`| `EXPORT_PIXEL`.
+|`rw_gpr`|`1`| The register#, `R1`, that contains the COLOR property, and acts as the source register for the export. The ALU clause that this instruction initiates interpolates the COLOR property for the current fragment, and stores the resultant color in `R1`.
+|`sel_w`|`5`| The W (`sel_w`) (i.e. the Alpha) channel of the XYZW vector being exported must be set to `1.0`. Note that when VS exported the COLOR property for each vertex, it set Alpha to `1.0`, but that was not the property of a *fragment*. Here in the PS, each fragment is shaded; not setting Alpha to `1.0` here causes the GPU to pick-up randeom/left-over values for the Alpha channel. That causes unwanted transparency effects. Hence, set the Alpha channel to 1.0 for each fragment.
+|`count`|`0`| The number of Color Buffers to which this pixel is being exported, minus one. (Verify this)
+|`eop`|`1`| End Of this Program.
+|`inst`|`0x54`| `CF_INST_EXPORT_DONE`. The `DONE` suffix suggests that this is the last (and, in this case, the only one) of all the Color Buffers to which this pixel is being exported.
+
+---
+
+#### **PS[2], ALU[0]:**
+
+Note that an `ALU_WORD` isn't the same as a `CF_ALU_WORD`.
+
+The ALU instructions interpolate the COLOR parameter for this fragment. To
+support the interpolation, the each interpolation instructions receives two of
+V0, V1-V0 (also written as V10), and V2-V0 (also written as V20) as PARAMETERS.
+It also receives the BaryCentric
+co-ordinates I/J (or u/v in other literature) inside `R0.X` and `R0.Y`
+respectively. See the section "5.2 Evergreen/Cayman Starting Condition" in the
+[Radeon Evergreen/Northern Islands Acceleration](http://developer.amd.com/wordpress/media/2013/10/evergreen_cayman_programming_guide.pdf)
+manual.
+
+The Evergreen ISA manual also describes the process of interpolation, and helps
+in understand the reason the instructions are laid out the way they are.
+
+In short, interpolating a single channel needs two instructions. The second
+instruction carries our the MAD operation: `tmp = V0 + I * V10`. The result of this
+operation is sent to the first instruction, which then performs the DOT
+operation: `res = tmp + J * V20`. The res is then written out to the
+destination channel.
+
+Each instruction in the instruction group can only write to its corresponding
+channel. That is, the ALU instruction in the X slot can write to no other
+channel except X, etc. (This limitation doesn't apply to the T unit).
+
+The two `INTERP_Z` instructions interpolate the Z channel; These two
+instructions must be alloted the ZW slots in the instruction group.
+
+The four `INTERP_XY` instructions, which form another instruction group,
+interpolate both X and Y channels. The X channel is interpolated by the
+instructions in the XY slots, while the Y channel is interpolated by those in
+the ZW slots. In the case of the Y-interpolation, instructions which calculates
+the MAD and DOT operations are in the ZW slot, but the Z-slot passes the result
+to the Y-slot; hence, the write to the Y channel must be in the Y slot, and not
+Z slot (such a write is not even allowed). Details in the Evergreen ISA.
+
+```
+PC| Offset|  ALU_WORD0| ALU_WORD1_OP2|
+--+-------+-----------+--------------+
+ 2|   0x10| 0x00380400|    0x40346c90|
+
+l| ps|  im| s1n| s1c| s1r|         s1s| s0n| s0c| s0r|         s0s|
+0| 00| 000|   0|  00|   0| 1 1100 0000|   0|  01|   0| 0 0000 0000|
+
+c| dc| dr|  dst_gpr|  bs|          inst| omod| wm|up|uem|s1a|s0a|
+0| 10|  0| 000 0001| 101| 000 1101 1001|   00|  1| 0|  0|  0|  0|
+```
+
+|Field|Value|Comment|
+|-----:|-----:|-------|
+|`s0s`|`0`| The first source, `src0` is the `R0` register. It contains the I/J co-ordinates.
+|`s0c`|`1`| Select the Y channel of `src0`. `R0.Y` contains the J co-ordinate.
+|`s1s`|`0x1c0`| `0x1c0` represents the location the parameter in the Parameter Cache. Since VS exports a single parameter, it is available at index 0 in the Parameter Cache, or, in absolute terms, at location `0x1c0 + 0 = 0x1c0`.
+|`l`|`0`| This isn't the last instruction in the current instruction group. This being a VLIW-5 CPU, the ALU instructions are grouped into one each for each of the XYZWT ALU units. In addition, the group can have 2 64-bit constants embedded in the instruction stream. These 7 slots are the maximum supported; a group can have less. The `l` bit marks the end of the group.
+|`wm`|`1`| `WRITE_MASK`. It would have been better for it to be named `WRITE_ENABLE`, since it doesn't prevent the write into the destination GPR; on the contrary, it enables the write. Note that this is the `DOT` half of the interpolation.
+|`inst`|`0xd9`| `OP2_INST_INTERP_Z`. This (and the next instruction) interpolate the Z channel.
+|`bs`|`5`| `ALU_VEC_210` bank swizzle. This instruction works with two source values. The order in which they must be loaded is fixed for this instruction. The `210` says that `src0` (the J coordinate) must be loaded in clock cycle 2, and `src1` (one of V10, V20, but not the one sent to the MAD half) must be loaded in clock cycle 1.
+|`dst_gpr`|`1`| Write the result into `R1`.
+|`dc`|`2`| Specifically, write the result into `R1.Z`.
+
+The MAD half of this 2-instruction group (only ZW) follows.
+
+---
+
+#### **PS[3], ALU[1]:**
+
+```
+PC| Offset|  ALU_WORD0| ALU_WORD1_OP2|
+--+-------+-----------+--------------+
+ 3|   0x18| 0x80380000|    0x60346c80|
+
+l| ps|  im| s1n| s1c| s1r|         s1s| s0n| s0c| s0r|         s0s|
+1| 00| 000|   0|  00|   0| 1 1100 0000|   0|  00|   0| 0 0000 0000|
+
+c| dc| dr|  dst_gpr|  bs|          inst| omod| wm|up|uem|s1a|s0a|
+0| 11|  0| 000 0001| 101| 000 1101 1001|   00|  0| 0|  0|  0|  0|
+```
+
+|Field|Value|Comment|
+|-----:|-----:|-------|
+|`s0s`|`0`| The first source, `src0` is the `R0` register. It contains the I/J co-ordinates.
+|`s0c`|`0`| Select the X channel of `src0`. `R0.X` contains the I co-ordinate.
+|`l`|`1`| This is the last instruction in the current instruction group.
+|`wm`|`0`| Do not write the destination register. However, the result of this instruction is forwarded to the DOT half (the instruction above).
+|`dc`|`3`| Select the `W` channel of the destination register. Although the destination register is not writte by this instruction, proper setting of `dst_gpr` and `dc` is required for correct forwarding of the result. Since this instruction is the MAD half of the `INTERP_Z` operation, it must set the destination channel to `W`.
+
+---
+
+#### **PS[4], ALU[2]:**
+
+This instruction begins the XYZW group, which interpolates both X and Y channels.
+The first two of the group interpolate the X channel; the last two, the Y
+channel.
+
+```
+PC| Offset|  ALU_WORD0| ALU_WORD1_OP2|
+--+-------+-----------+--------------+
+ 4|   0x20| 0x00380400|    0x00346b10|
+
+l| ps|  im| s1n| s1c| s1r|         s1s| s0n| s0c| s0r|         s0s|
+0| 00| 000|   0|  00|   0| 1 1100 0000|   0|  01|   0| 0 0000 0000|
+
+c| dc| dr|  dst_gpr|  bs|          inst| omod| wm|up|uem|s1a|s0a|
+0| 00|  0| 000 0001| 101| 000 1101 0110|   00|  1| 0|  0|  0|  0|
+```
+
+|Field|Value|Comment|
+|-----:|-----:|-------|
+|`s0s`|`0`| The first source, `src0` is the `R0` register. It contains the I/J co-ordinates.
+|`s0c`|`1`| Select the Y channel of `src0`. `R0.Y` contains the J co-ordinate.
+|`inst`|`0xd6`| `OP2_INST_INTERP_XY`. This (and the next three instructions) interpolate the XY channels. This instruction is the DOT half of the DOT-MAD interpolation instructions.
+|`wm`|`1`| `WRITE_ENABLE`. Note that this is the `DOT` half of the X-interpolation. It must write to the X channel.
+|`dst_gpr`|`1`| `R1` is the destination register which is, in the end, going to contain the interpolated XYZW values of the PARAMETER.
+|`dc`|`0`| Select the `X` channel of the destination register.
+
+---
+
+#### **PS[5], ALU[3]:**
+
+This instruction begins the XYZW group, which interpolates both X and Y channels.
+
+```
+PC| Offset|  ALU_WORD0| ALU_WORD1_OP2|
+--+-------+-----------+--------------+
+ 5|   0x28| 0x00380000|    0x20346b10|
+
+l| ps|  im| s1n| s1c| s1r|         s1s| s0n| s0c| s0r|         s0s|
+0| 00| 000|   0|  00|   0| 1 1100 0000|   0|  00|   0| 0 0000 0000|
+
+c| dc| dr|  dst_gpr|  bs|          inst| omod| wm|up|uem|s1a|s0a|
+0| 01|  0| 000 0001| 101| 000 1101 0110|   00|  1| 0|  0|  0|  0|
+```
+
+|Field|Value|Comment|
+|-----:|-----:|-------|
+|`s0s`|`0`| The first source, `src0` is the `R0` register. It contains the I/J co-ordinates.
+|`s0c`|`0`| Select the X channel of `src0`. `R0.X` contains the I co-ordinate.
+|`wm`|`1`| `WRITE_ENABLE`. Note that this instruct slot performs double-duty. It not only calculates forms the MAD half of the XY interpolation, it also receives the interpolated Y value from the ZW instruction pairs. As a result, we must select dst.`Y` as writable.
+|`dst_gpr`|`1`| `R1` is the destination register which is, in the end, going to contain the interpolated XYZW values of the PARAMETER.
+|`dc`|`1`| Select the `Y` channel of the destination register.
+
+---
+
+#### **PS[6], ALU[4]:**
+
+This instruction begins the XYZW group, which interpolates both X and Y channels.
+The first two of the group interpolate the X channel; the last two, the Y
+channel.
+
+```
+PC| Offset|  ALU_WORD0| ALU_WORD1_OP2|
+--+-------+-----------+--------------+
+ 6|   0x30| 0x00380400|    0x40346b00|
+
+l| ps|  im| s1n| s1c| s1r|         s1s| s0n| s0c| s0r|         s0s|
+0| 00| 000|   0|  00|   0| 1 1100 0000|   0|  01|   0| 0 0000 0000|
+
+c| dc| dr|  dst_gpr|  bs|          inst| omod| wm|up|uem|s1a|s0a|
+0| 10|  0| 000 0001| 101| 000 1101 0110|   00|  0| 0|  0|  0|  0|
+```
+
+|Field|Value|Comment|
+|-----:|-----:|-------|
+|`s0s`|`0`| The first source, `src0` is the `R0` register. It contains the I/J co-ordinates.
+|`s0c`|`1`| Select the Y channel of `src0`. `R0.Y` contains the J co-ordinate.
+|`wm`|`0`| Do not write the destination register. Note that this is the `DOT` half of the Y-interpolation; it's output is the final result of the Y-interpolation. But since this instruction itself lies in the Z-slot of the group, it cannot select dst.`Y` to write; instead the GPU forwards the output of this instruction to the instruction in the Y-slot, which then writes into the Y channel of the destination register. Nevertheless, this instruction must appropriately select the destination and the channel.
+|`dst_gpr`|`1`| `R1` is the destination register which is, in the end, going to contain the interpolated XYZW values of the PARAMETER.
+|`dc`|`2`| Select the `Z` channel of the destination register.
+
+---
+
+#### **PS[7], ALU[5]:**
+
+This instruction begins the XYZW group, which interpolates both X and Y channels.
+
+```
+PC| Offset|  ALU_WORD0| ALU_WORD1_OP2|
+--+-------+-----------+--------------+
+ 7|   0x38| 0x80380000|    0x60346b00|
+
+l| ps|  im| s1n| s1c| s1r|         s1s| s0n| s0c| s0r|         s0s|
+1| 00| 000|   0|  00|   0| 1 1100 0000|   0|  00|   0| 0 0000 0000|
+
+c| dc| dr|  dst_gpr|  bs|          inst| omod| wm|up|uem|s1a|s0a|
+0| 11|  0| 000 0001| 101| 000 1101 0110|   00|  0| 0|  0|  0|  0|
+```
+
+|Field|Value|Comment|
+|-----:|-----:|-------|
+|`s0s`|`0`| The first source, `src0` is the `R0` register. It contains the I/J co-ordinates.
+|`s0c`|`0`| Select the X channel of `src0`. `R0.X` contains the I co-ordinate.
+|`wm`|`0`| Do not write to the destination register. Since this is the MAD half of the Y-interpolation, it forwards its result to the DOT half, i.e. the instruction in the Z-slot. For proper forwarding, this instruction must still select the corret destination register and channel.
+|`dst_gpr`|`1`| `R1` is the destination register.
+|`dc`|`3`| Select the `W` channel of the destination register.
+
+The entire interpolation of the XYZ coordinates of the COLOR parameter can be
+understood as shown below, with `R1.XYZ` containing the interpolated COLOR
+channels:
+
+```
+interp_z	r1.z, r0.y, param0.x	(r1.z = t0 + v20.z * j)
+
+interp_z	__.w, r0.x, param0.x	(t0 = v0.z + v10.z * i)
+
+
+
+interp_xy	r1.x, r0.y, param0.x	(r1.x = t1 + v20.x * j)
+
+interp_xy	r1.y, r0.x, param0.x	(t1 = v0.x + v10.x * i)
+					(r1.y = t2)
+
+interp_xy	__.z, r0.y, param0.x	(t2 = t3 + v20.y * j)
+
+interp_xy	__.w, r0.x, param0.x	(t3 = v0.y + v10.y * i)
+```
+---
+
+### **Command Buffer:**
