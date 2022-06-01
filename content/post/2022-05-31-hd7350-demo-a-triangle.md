@@ -868,7 +868,7 @@ c0016800 SET_CONFIG_REG
 c0034300 SURFACE_SYNC
 02000040 CB0_DEST_BASE_ENA, CB_ACTION_ENA
 00003840 Size of the Color Buffer in units of 256 bytes.
-00008000 cb_gpu_addr >> 25
+00008000 cb_gpu_addr >> 256
 0000000a
 ```
 
