@@ -317,7 +317,7 @@ sma| fca| nfa|     fmt| ucf| dsw| dwz| dwy| dwx| rsvd|    sem_id|
 
 #### **FS[4], VFC[1]:**
 
-Similar to above, but fetches COLOR parameter.
+Similar to above, but fetches the COLOR parameter.
 
 ```
 PC| Offset|  VTX_WORD0|  VTX_WORD1_SEM|  VTX_WORD2|     ZEROES|
@@ -673,16 +673,16 @@ interp_xy	__.w, r0.x, param0.x	(t3 = v0.y + v10.y * i)
 
 ### **Command Buffer:**
 
-The Command Buffer consists of 613 words. They are broken down below into
-individual commands, in sequential order. The commands are encapsulated within
-GFX ring packets of type 3. The manuals have the format and meaning of various
-fields.
+The Command Buffer consists of some number of words. The commands are
+encapsulated within GFX ring packets of type 3. The manuals have the format and
+the meaning of various fields.
 
 The command buffer was extracted out of MESA when rendering the same triangle,
 using an OpenGL app. Then, the buffer was modified to suit the modest needs of
 this demo, and to fix the pointers to various resources.
 
-The buffer is sent to the GFX ring for execution as an Indirect Buffer.
+The buffer is then inserted into the GFX ring for execution as an
+Indirect Buffer.
 
 It is available, as a binary file, [here](/wip/data/eg.cmds.0.bin).
 Only some of the most obvious commands are shown below.
