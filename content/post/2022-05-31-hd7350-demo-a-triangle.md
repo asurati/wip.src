@@ -910,7 +910,7 @@ vertical.
 
 We still want to keep the vertices in the NDC space, but also want to render a
 nice, equilateral triangle. We want to keep the height of the triangle the same,
-i.e. 1.8 units in the NDC space. An equilateral triangle with height a of 1.8
+i.e. 1.8 units in the NDC space. An equilateral triangle with a height of 1.8
 units has each of its sides measuring `2 * 1.8 / tan(pi/3) = 2.07846096908`
 units.
 
