@@ -12,6 +12,10 @@ tags:
   - GPU
 ---
 
+*Update #1 on: 2nd June, 2022.*
+
+---
+
 *Warning: Improperly programming a GPU, or a display, may damage the devices.*
 
 This post demonstrates setting up a HD7350 pipeline to draw a triangle.
@@ -893,3 +897,40 @@ static const float verts[] = {
 	0.0,  0.9, 0,		0, 1, 0		/* T */
 };
 ```
+
+---
+
+### **Update #1:**
+
+The vertices given above do not form an equilateral triangle. Moreover, because
+the co-ordinates are in the NDC space, and because the aspect ratio of the
+ViewPort is not square (1280x720 is 16:9), the ViewPort Transformation causes
+the triangle to triangle to stretch out in the horizontal dimension with
+respect to the vertical.
+
+We still want to keep the vertices in the NDC space, but also want to render a
+nice, equilateral triangle. We want to keep the height of the triangle the same,
+i.e. 1.8 units in the NDC space. An equilateral triangle with height a of 1.8
+units has each of its sides measuring `2 * 1.8 / tan(pi/3) = 2.07846096908`
+units.
+
+The ViewPort stretches the horizontal units by a factor of 16/9, with respect
+to the vertical units. Hence, the base of the triangle must be *compressed* by
+that same amount before performing the ViewPort Transformation.
+
+That compression gives a triangle base of 
+`2.07846096908 * 9 / 16 = 1.16913429511` in NDC units.
+Therefore, the X co-ordinates of the bottom-left and bottom-right vertices
+should be changed to `-1.16913429511/2 = -0.58456714755` and
+`1.16913429511/2 = 0.58456714755` units, respectively.
+
+```
+static const float verts[] = {
+	/* positions */		/* colors */
+	0.5846, -0.9, 0,	1, 0, 0,	/* BR */
+	-0.5846, -0.9, 0,	0, 0, 1,	/* BL */
+	0.0,  0.9, 0,		0, 1, 0		/* T */
+};
+```
+
+The resultant image is available [here](/wip/images/eg.1.png).
