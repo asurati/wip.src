@@ -941,7 +941,8 @@ The resultant image is available [here](/wip/images/eg.1.png).
 
 ### **Update #2:** <a name="update2"></a>
 
-Instead of hand-coding the instructions, an assembler was written to help.
+Instead of hand-coding the instructions, an
+[assembler](https://github.com/asurati/egas) was written to help.
 The FS was made part of the VS, i.e.`SQ_PGM_FS_START` is made the
 same as `SQ_PGM_VS_START`, and any FS-specific offsets were made relative to
 the start of the VS.
