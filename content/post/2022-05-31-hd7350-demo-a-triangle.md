@@ -14,7 +14,7 @@ tags:
 
 *[Update #1](#update1) on: 2nd June, 2022.*
 
-*[Update #2](#update2) on: 5nd June, 2022.*
+*[Update #2](#update2) on: 5th June, 2022.*
 
 ---
 
