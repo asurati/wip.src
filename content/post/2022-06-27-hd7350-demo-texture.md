@@ -151,14 +151,14 @@ The image, as displayed on the previously cleared (to Black color) frame-buffer
 is, [here](/wip/images/eg.8.png).
 
 The reason the image is inverted is that, for OpenGL, V (the vertical, or Y)
-coordinate is 0 at the bottom of the image, not at the top.
+coordinate is 0 at the bottom of the texture image, not at the top.
 
 One can refer to the vertices definition above to verify that corner of the
-square that ends up at the top-left of the ViewPort is the one marked as
-bottom-left in the NDC space (The Y-axis is flipped during the ViewPort
-Transformation), and is also the one that has the (0,0) texture coordinates.
-Thus,
-the bottom-left corner of the texture image gets applied to the top-left corner
-of the ViewPort, resulting in a flipped image on the ViewPort.
-The remedy is to flip the V-axis of the source image being used as the texture.
+NDC-square that ends up at the top-left of the ViewPort-square is the one
+marked as bottom-left in the NDC space (The Y-axis is flipped during the
+ViewPort Transformation), and is also the one that has the (0,0) texture
+coordinates. Thus, the bottom-left corner of the texture image gets applied to
+the top-left corner of the ViewPort-square, resulting in a flipped image on
+the ViewPort. The remedy is to flip the V-axis of the source image being used
+as the texture.
 See also [here](https://learnopengl.com/Getting-started/Textures).
