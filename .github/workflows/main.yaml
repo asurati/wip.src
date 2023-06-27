@@ -2,7 +2,7 @@ name: CI
 on: push
 jobs:
   deploy:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - name: Git checkout
         uses: actions/checkout@v2
@@ -10,7 +10,7 @@ jobs:
       - name: Setup hugo
         uses: peaceiris/actions-hugo@v2
         with:
-          hugo-version: "0.64.0"
+          hugo-version: "0.112.0"
 
       - name: Build
         run: hugo
