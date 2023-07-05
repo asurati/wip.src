@@ -323,7 +323,7 @@ start of the texture buffer storing the top-row of the image instead of the
 bottom row, the texture configuration has the `FLIPY` bit enabled to let the
 GPU know that it must compensate for the reversed ordering.
 
-If the T-format buffer were to be created from a linear format that had the
+If the T-format buffer were created from a linear format that had the
 image vertically flipped, then the `FLIPY` bit would not need to be set.
 
 ---
