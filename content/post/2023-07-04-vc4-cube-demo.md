@@ -534,8 +534,8 @@ black pixels were laid on top of the cube.
 After hours of debugging, the pattern shown below, worked. It seems that
 back-to-back rotation calculations do not give accurate results. The `nop`
 after each rotation instruction is required, since otherwise, the `fsub`
-instruction would be reading from the A-reg-file immediately after the rotation
-had written into the A-reg-file.
+instruction would be reading from a location in A-reg-file that was written to
+by the immediately preceding rotation instruction.
 
 ```
     /* func_dfdx: */
