@@ -562,7 +562,7 @@ by the immediately preceding rotation instruction.
 ---
 
 ### **Result:**
-[Here](https://drive.google.com/file/d/15VhwMhjViI5oS_vb0vPaBUN_wy8Pw6-0/view?usp=sharing)
+[Here](https://drive.google.com/file/d/1Vik78wRVhf6n42fvoIMDjL02OuKxzR8v/view?usp=sharing)
 is a video capture of the `RPi3B+` booting and spinning the cube. The
 rendering is a bit darker, for some reason, than that of the `vkcube` running
 with `mesa` on an `Intel IvyBridge` machine.
