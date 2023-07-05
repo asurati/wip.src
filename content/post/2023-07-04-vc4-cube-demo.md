@@ -15,10 +15,11 @@ tags:
 This post demonstrates a partial recreation of the
 [`vkcube`](https://github.com/KhronosGroup/Vulkan-Tools/blob/main/cube/cube.c)
 application, but
-directly on the `vc4` GPU, without involving any of the graphics APIs. It is a
-partial recreation, as the only behavior it demonstrates is a
+directly on the `vc4` GPU, without involving any of the software graphics APIs.
+It is a partial recreation, as the only behavior it demonstrates is a
 [`LunarG`](https://github.com/KhronosGroup/Vulkan-Tools/blob/main/cube/lunarg.ppm.h)
-cube, rotating on its Y-axis.
+cube, rotating on its Y-axis. `vkcube` additionally supports speeding up or
+slowing down the spinning cube, and reversing the direction of the spin.
 
 ---
 
