@@ -102,13 +102,13 @@ Below is the vertex and texture coordinate information for the face situated
 at `-Z` axis, i.e. the `XY` face situated at `Z=-1`.
 
 ```
-                   ^+y
+                   ^ +y
          A         |            B
     obj(1,1,-1)    |       obj(-1,1,-1)
     tex(0,1)       |       tex(1,1)
                    |
                    |
-     +x<-----------+-------------->
+    +x <-----------+-------------->
                    |
                    |
     tex(0,0)       |       tex(1,0)
@@ -424,7 +424,7 @@ Similarly, for odd block of aligned `4x4` pixels.
 
 Within each aligned `4x4` block of pixels assigned to a QPU, the QPU processes
 pixel-quad at a time (since, although a QPU is considered to be a
-16-way SIMD processor, physically it is a 4-way SIMD-processor multiplexed
+16-way SIMD processor, physically it is a 4-way SIMD processor multiplexed
 4x over 4 clock cycles).
 
 Since `vkcube` relies on `dFdx` and `dFdy` in its fragment shader
