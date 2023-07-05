@@ -294,7 +294,7 @@ matrix R, like so: VP * R in that order.
 
 The Binner Control List must be provided with an initial Tile Allocation Memory,
 even if it is just one page. If the Tile Allocation Memory Base and Size are
-both kept 0, and if the `OUTOMEM` irq handler does hand out pages when needed,
+both kept 0, and even if the `OUTOMEM` irq handler hands out pages when needed,
 the renderer thread enters an error condition as signaled by the `CT1CS.CTERR`
 bit.
 
@@ -303,8 +303,8 @@ information, and the other stores the texture coordinate information.
 The binner needs access to
 only the vertex coordinate information to build the tile-lists. The varyings
 (such as the texture coordinates) are needed later by the renderer when the
-vertex shader runs. By separating the attributes, one can avoid polluting the
-caches with data that is not needed by a particular stage.
+vertex shader runs. By separating the attributes, one can avoid loading
+unnecessary data that pollutes the caches.
 
 ---
 
@@ -321,7 +321,7 @@ bottom row, the texture configuration has the `FLIPY` bit enabled to let the
 GPU know that it must compensate for the reversed ordering.
 
 If the T-format buffer were to be created from a linear format that had the
-image vertically flipped, then the `FLIPY` bit does not need to be set.
+image vertically flipped, then the `FLIPY` bit would not need to be set.
 
 ---
 
@@ -332,9 +332,10 @@ The format of the coordinate shader output is the described by the
 `Shaded Coordinates Format in VPM for PTB` in the
 [V3D Architecture Reference Guide](https://docs.broadcom.com/doc/12358545)
 
-The same guide also describes the format of the vertex shader output.
+The same guide also describes the format of the vertex shader output,
+`Shaded Vertex Format in VPM for PSE`.
 
-The vertex shader outputs 5 varyings: The xyz clip-coordinates and the st
+The vertex shader outputs 5 varyings: The `xyz` clip-coordinates and the `st`
 texture-coordinates for each shaded vertex. These varyings are then
 interpolated and provided to the fragment shader.
 
@@ -345,17 +346,14 @@ interpolated and provided to the fragment shader.
 Most GPUs render pixels in a group of aligned `2x2` block of pixels, also
 called a pixel-quad.
 
-On AMD GPUs, a hardware block named `Render Backend` usually has 4
-[pixel pipelines](https://en.wikipedia.org/wiki/Render_output_unit). Each
-Render Backend is expected to process an pixel-quad.
-
 With `vc4` GPU too, each QPU processes a pixel-quad when running fragment
 shaders. Not only that, since each QPU is considered to be a 16-way SIMD
-processor, it also arranges pixels in aligned blocks of `4x4` for processing.
+processor, it processes aligned blocks of `4x4` pixels, one pixel-quad inside
+it at a time.
 
 Within an aligned block of `4x4` pixels, which SIMD-element, out of the 16
-elements of a QPU, is responsible for which pixel can be known by running a
-series of the following fragment shaders:
+SIMD-elements of a QPU, is responsible for which pixel, can be known by running
+a series of the following fragment shaders:
 
 ```
     0x159a7d80, 0x10020827, /* or       r0, element_number, element_number; */
@@ -372,7 +370,7 @@ series of the following fragment shaders:
 The shader outputs the color white if the SIMD-element on which this shader
 instance is running is 0. The rest of the shader instances color their pixel
 black. In the rendered frame-buffer, the lone white pixel in a block of aligned
-`4x4 pixels reveals the SIMD-element number that was responsible for coloring
+`4x4` pixels reveals the SIMD-element number that was responsible for coloring
 the white pixel.
 
 By running such a series of fragment shaders, one for each SIMD-element, the
@@ -429,7 +427,7 @@ pixel-quad at a time (since, although a QPU is considered to be a
 16-element SIMD processor, physically it is a 4-way SIMD-processor multiplexed
 4x over 4 clock cycles).
 
-Since the `vkcube` relies on `dFdx` and `dFdy` in its fragment shader
+Since `vkcube` relies on `dFdx` and `dFdy` in its fragment shader
 to perform lighting calculations, the exact layout of a pixel-quad
 is needed. From the above layouts, one can derive a finer relation between a
 pixel-quad and the 4 physical QPU SIMD-elements:
@@ -566,5 +564,5 @@ by the immediately preceding rotation instruction.
 ### **Result:**
 [Here](https://drive.google.com/file/d/15VhwMhjViI5oS_vb0vPaBUN_wy8Pw6-0/view?usp=sharing)
 is a video capture of the `RPi3B+` booting and spinning the cube. The
-rendering is a bit darker for some reason, than that of the `vkcube` running
+rendering is a bit darker, for some reason, than that of the `vkcube` running
 with `mesa` on an `Intel IvyBridge` machine.
