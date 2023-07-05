@@ -566,3 +566,8 @@ by the immediately preceding rotation instruction.
 is a video capture of the `RPi3B+` booting and spinning the cube. The
 rendering is a bit darker, for some reason, than that of the `vkcube` running
 with `mesa` on an `Intel IvyBridge` machine.
+
+> It seems that Google Drive allows online playback of the video only at 360p,
+> even though the video resolution is 800x600. Downloading the file first and
+> then playing it in the browser, displays the video at its original
+> resolution.
