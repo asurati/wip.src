@@ -26,8 +26,11 @@ menu:
       url: "index.xml"
 
 params:
-  footer: "&copy; 2021-2023 [Amol Surati](https://github.com/asurati). This work is made available under
-    [CC BY 4.0](https://creativecommons.org/licenses/by/4.0)."
+  footer: "&copy; 2021-2023 [Amol Surati](https://github.com/asurati).
+          This work is made available under
+          [CC BY 4.0](https://creativecommons.org/licenses/by/4.0).<br/>
+          Theme [hugo-xmin](https://github.com/yihui/hugo-xmin) by
+          [Yihui Xie](https://github.com/yihui)."
 
 markup:
   goldmark:
