@@ -355,7 +355,7 @@ Within an aligned block of `4x4` pixels, which SIMD-element, out of the 16
 SIMD-elements of a QPU, is responsible for which pixel, can be known by running
 a series of the following fragment shaders:
 
-```
+``` c
     0x159a7d80, 0x10020827, /* or       r0, element_number, element_number; */
     0xff000000, 0xe0020867, /* li       r1, -, 0xff000000; */
     0x0d9c01c0, 0xd00228a7, /* sub      r2, r0, 0 sf; */
@@ -515,7 +515,7 @@ below, the rendered output had black pixels due to negative dot products of the
 surface normal and the light vector. The rendering was as if a fine grill of
 black pixels were laid on top of the cube.
 
-```
+``` c
     /* func_dfdx: */
     . . .
     . . .
@@ -535,7 +535,7 @@ after each rotation instruction is required, since otherwise, the `fsub`
 instruction would be reading from a location in A-reg-file that was written to
 by the immediately preceding rotation instruction.
 
-```
+``` c
     /* func_dfdx: */
     . . .
     . . .
