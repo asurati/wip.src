@@ -335,7 +335,7 @@ The format of the coordinate shader output is the described by the
 The same guide also describes the format of the vertex shader output,
 `Shaded Vertex Format in VPM for PSE`.
 
-The vertex shader outputs 5 varyings: The `xyz` clip-coordinates and the `st`
+The vertex shader outputs 5 varyings: the `xyz` clip-coordinates and the `st`
 texture-coordinates for each shaded vertex. These varyings are then
 interpolated and provided to the fragment shader.
 
@@ -424,7 +424,7 @@ Similarly, for odd block of aligned `4x4` pixels.
 
 Within each aligned `4x4` block of pixels assigned to a QPU, the QPU processes
 pixel-quad at a time (since, although a QPU is considered to be a
-16-element SIMD processor, physically it is a 4-way SIMD-processor multiplexed
+16-way SIMD processor, physically it is a 4-way SIMD-processor multiplexed
 4x over 4 clock cycles).
 
 Since `vkcube` relies on `dFdx` and `dFdy` in its fragment shader
