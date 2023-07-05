@@ -370,8 +370,8 @@ a series of the following fragment shaders:
 The shader outputs the color white if the SIMD-element on which this shader
 instance is running is 0. The rest of the shader instances color their pixel
 black. In the rendered frame-buffer, the lone white pixel in a block of aligned
-`4x4` pixels reveals the SIMD-element number that was responsible for coloring
-the white pixel.
+`4x4` pixels reveals the position within the block of the SIMD-element number
+that was responsible for coloring the white pixel.
 
 By running such a series of fragment shaders, one for each SIMD-element, the
 following pattern emerges, at least around the origin.
