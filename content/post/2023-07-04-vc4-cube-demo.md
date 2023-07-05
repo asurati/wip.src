@@ -48,7 +48,7 @@ region](https://developer.arm.com/documentation/den0024/a/Memory-Ordering/Memory
 (as it is, on this setup), the
 corresponding CPU cache-lines must be cleared up to the Point of Coherency upon
 change, such that, if the GPU were to view the system RAM region housing the
-matrix, it sees the updated data. But there's also a `Uniforms Cache (QUC)`
+matrix, it would see the updated data. But there's also a `Uniforms Cache (QUC)`
 on the *GPU* side that needs to be invalidated of stale data, if the GPU is to
 successfully retrieve the updated matrix from the system RAM.
 
