@@ -346,8 +346,8 @@ interpolated and provided to the fragment shader.
 
 ### **Pixel and Element relation:**
 
-Most GPUs render pixels in a group of aligned `2x2` block of pixels, also
-called a pixel-quad.
+GPUs seem to prefer rendering pixels in a group of aligned `2x2` block of
+pixels, also called a pixel-quad.
 
 With `vc4` GPU too, each QPU processes a pixel-quad when running fragment
 shaders. Not only that, since each QPU is considered to be a 16-way SIMD
@@ -371,7 +371,8 @@ a series of the following fragment shaders:
 ```
 
 The shader outputs the color white if the SIMD-element on which this shader
-instance is running is 0. The rest of the shader instances color their pixel
+instance is running is 0. The rest (15 in number) of the shader instances,
+running on the same QPU as the instance with SIMD-element 0, color their pixel
 black. In the rendered frame-buffer, the lone white pixel in a block of aligned
 `4x4` pixels reveals the position, within the `4x4` pixels block, of the
 SIMD-element that was responsible for coloring the white pixel.
@@ -426,7 +427,7 @@ Similarly, for odd block of aligned `4x4` pixels.
 ```
 
 Within each aligned `4x4` block of pixels assigned to a QPU, the QPU processes
-pixel-quad at a time (since, although a QPU is considered to be a
+one pixel-quad at a time (since, although a QPU is considered to be a
 16-way SIMD processor, physically it is a 4-way SIMD processor multiplexed
 4x over 4 clock cycles).
 
@@ -463,13 +464,13 @@ The number below each pixel is given by the expression `element_numer & 3`.
 The 4 pixel-quads, within each aligned `4x4` block of pixels, are each
 processed by [similar SIMD-elements](https://github.com/anholt/mesa/issues/12).
 
-This fact is exploited by the demo's fragment shader to calculate the partial
+This fact is exploited by `vkcube` fragment shader to calculate the partial
 derivatives of the clip-space-position varying, with respect to the X and the Y
 directions.
 
 For each (marked by `*`) of the 4 pixels of a pixel-quad, the `dX` and `dY`
-vectors of a per-pixel varying function
-(such as the clip-space-position in the `vkcube` demo) are:
+vectors of a per-pixel or per-fragment varying function
+(such as the clip-space-position in `vkcube`) are:
 
 ```
     ^ +y                                 ^ +y
@@ -510,7 +511,7 @@ surface normal at the given pixel.
 
 As described [here](https://github.com/anholt/mesa/issues/12), the fragment
 shader can rely on the `element_number` of SIMD-element running an instance of
-the shader, and the `mul rotation` feature of the QPU, to calculate the
+the shader, and on the `mul rotation` feature of the QPU, to calculate the
 derivatives.
 
 While testing the fragment shader, if the rotations were calculated as shown
