@@ -62,7 +62,7 @@ binning phase. Servicing that interrupt allows one to provide the device with
 the memory it needs piece by piece from a large, pre-allocated pool.
 
 The setup does have drawbacks, as it isn't a complete OS. For instance,
-rotating the cube requires calculation of trigonometric functions, and lack of
+rotating the cube requires calculating trigonometric functions, and the lack of
 a maths library in this environment forces the use of a pre-built table of
 fixed values (here, `sin`/`cos` for every `4°`, starting at `0°`).
 
@@ -71,32 +71,33 @@ display-list. This setup just creates multiple copies of the initial
 display-list, each copy with a different, but same-sized frame-buffer region,
 to use them as multiple images into which the GPU can render. Once an image is
 rendered into, it is sent to the HVS for presenting, and an image that has
-already been presented is pulled from HVS to begin rendering the next frame
+already been presented is pulled from the HVS to begin rendering the next frame
 into.
 
 ---
 
 ### **Vertices, and their Winding Order:**
 
-Each of the 6 faces of the cube is viewed from a position where it is facing
-the `viewer/eye/camera`, and the coordinates are noted down.
+Each of the 6 faces of the cube is viewed from a position where it faces us,
+the coordinates are noted down.
 
-`vkcube` defines a `2x2x2`-sized cube centered at the origin of the
-`object-space`. It provides the vertices in a CCW order. The object-space and
+`vkcube` defines a `2x2x2`-sized cube, centered at the origin of the
+`object-space`. It lists the vertices in a CCW order. The object-space and
 the `world-space` coincide - the model-matrix would have been identity, if not
-for the requirement of rotating the cube. The camera is at `(0,3,5)` in
+for the requirement of rotating the cube. The `eye/camera` is at `(0,3,5)` in
 the world-space coordinates (assuming the `RHS` coordinate system), looking
 right at the origin `(0,0,0)` of the world-space coordinate, without any twists
 or turns along its (camera's) Z-axis. As a result, the `+Z` cube face is facing
 the camera.
 
-As described in the post
-[vc4: Winding Order](/wip/post/2023/06/30/vc4-winding-order/),
+As described in the
+[vc4: Winding Order](/wip/post/2023/06/30/vc4-winding-order/) post,
 this demo chooses to rely on the the default CCW front-winding and the `Y-flip`
 of the clip-space coordinates, to draw the cube. This forces the vertices to be
 initially provided in the `CW` winding-order; after the multiplication by the
-MVP matrix and a Y-flip in the vertex shader, the primitive processing stage
-of the GPU sees the default: CCW as front-winding and CW as back-winding.
+MVP matrix and a Y-flip in the coordinate and vertex shaders, the primitive
+processing stage of the GPU sees the default: CCW as front-winding and CW as
+back-winding.
 
 Below is the vertex and texture coordinate information for the face situated
 at `-Z` axis, i.e. the `XY` face situated at `Z=-1`.
@@ -142,7 +143,9 @@ matrix (the View Matrix, specifically) when running the vertex shader.
 The clip-space Y-flip then turns the ordering back into the CW winding-order.
 As a result, this `-Z` face is treated as a back-face by the primitive
 processing stage and is culled, as it should be; asking the GPU to draw only
-this face results in a blank image filled with the clear color.
+this face results in a blank image filled with the clear color. Of course, due
+to the rotation, when the -Z face happens to face the camera, it is rendered as
+expected.
 
 ---
 
@@ -414,7 +417,7 @@ corresponding pixel white.
 Similarly, for odd block of aligned `4x4` pixels.
 
 ```
-    // Odd block
+   // Odd block
 
    10   11   6   7
    08   09   4   5
