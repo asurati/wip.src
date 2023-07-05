@@ -32,7 +32,7 @@ the HVS FIFO2/Channel2 and the TXP block can be configured to gather the
 output from the HVS into the system RAM, creating an identical copy of the image
 scaled and displayed on the screen.
 
-The format of the HVS registers are shown in 
+The format of the HVS registers are shown in
 [HVS and PV Settings](/wip/post/2021/10/07/hvs-and-pv-settings/). The
 particular values set can be found in the driver program,
 [here](https://github.com/asurati/x03/blob/main/demo/d55.c).
@@ -57,3 +57,4 @@ The scaled-up image is found [here](/wip/images/d55.png). For comparison, the
 source image, which is 640x480 in size, and which is rendered by the 3D
 pipeline, is found [here](/wip/images/d53.png).
 
+---

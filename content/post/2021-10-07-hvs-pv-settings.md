@@ -134,3 +134,5 @@ The DisplayLists at index 0x994. This list corresponds to the frame buffer setup
 |`[0x4]=0x580780`| `HORZB` register.<br/>`[31:16]` = `88`. Horizontal Front Porch, in pixels.<br/>`[15:0]` = `1920`. Horizontal Active, in pixels.
 |`[0x5]=0x240005`| `VERTA` register.<br/>`[31:16]` = `36`. Vertical Back Porch, in lines.<br/>`[15:0]` = `5`. Vertical Sync, in lines.
 |`[0x6]=0x40438`| `VERTB` register.<br/>`[31:16]` = `4`. Vertical Front Porch, in lines.<br/>`[15:0]` = `1080`. Vertical Active, in lines.
+
+---

@@ -34,7 +34,7 @@ desired resolution were 640x480@60Hz, the monitor would instead run with
 colour. The first column of the frame buffer was thus at column #2 on the
 screen.
 
-A similar problem is described within a bug, 
+A similar problem is described within a bug,
 [here](https://bugs.freedesktop.org/show_bug.cgi?id=27452). The bug also
 describes the root cause - monitor not being sent the appropriate infoframe
 packets.
@@ -44,3 +44,5 @@ corresponding to the resolution being set. It does so by writing into the
 appropriate HDMI Packet RAM registers, and asking the HDMI encoder to pull
 the infoframe by reading them. With these two steps, the monitor displays the
 expected resolutions exactly.
+
+---

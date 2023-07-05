@@ -183,3 +183,5 @@ The `V3D_INTCTL` register has Binner-Out-of-Memory set. Not of any
 relevance here, it was raised likely because the Binner has not been
 provided with sufficient memory (although no Binning/Rendering work has been
 scheduled).
+
+---

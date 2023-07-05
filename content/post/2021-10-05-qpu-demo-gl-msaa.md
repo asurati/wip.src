@@ -54,3 +54,5 @@ image viewer that can disable its own anti-aliasing support
 (for instance, `feh --force-aliasing`) allows one to see the MSAA effect on
 individual pixels, especially those at the left and the right edges of the
 triangle, clearly.
+
+---

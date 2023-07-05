@@ -165,3 +165,5 @@ the first triangle (`TL, BR, BL`), and the result is an up-right image, as
 expected:
 
 ![winding.1.png](/wip/images/winding.1.png)
+
+---    

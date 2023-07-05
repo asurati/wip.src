@@ -137,3 +137,5 @@ standard resolutions are:
 |-----:|-------|
 |`640x480@60Hz`| PLLH: `NDIV=0x1a`, `FDIV=0x40000`.<br/>PLLH_PIX: 8-bit integer divisor set to `2`.
 |`800x600@60Hz`| PLLH: `NDIV=0x14`, `FDIV=0xd5556`.<br/>PLLH_PIX: 8-bit integer divisor set to `1`.
+
+---

@@ -152,7 +152,7 @@ contains `0x1dd`, i.e. 31% duty cycle.
 ---
 
 The functions `nvkm_therm_fan_set_defaults` and `nvkm_fan_update`, both found
-[here](https://lxr.missinglinkelectronics.com/linux/drivers/gpu/drm/nouveau/nvkm/subdev/therm/fan.c), show how to gradually increase or decrease the fan speed over a 
+[here](https://lxr.missinglinkelectronics.com/linux/drivers/gpu/drm/nouveau/nvkm/subdev/therm/fan.c), show how to gradually increase or decrease the fan speed over a
 slow gradient.
 
 ---
@@ -160,3 +160,5 @@ slow gradient.
 The PWM divider value is 692. Assuming that PWM's input clock is the 27MHz
 crystal found on the card, the divider value generates PWM waves at a
 frequency of 27000/692 ~ 39KHz. That is equivalent to a period of 25.641 usecs.
+
+---

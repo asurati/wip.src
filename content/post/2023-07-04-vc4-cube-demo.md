@@ -571,3 +571,5 @@ with `mesa` on an `Intel IvyBridge` machine.
 > even though the video resolution is 800x600. Downloading the file first and
 > then playing it in the browser, displays the video at its original
 > resolution.
+
+---

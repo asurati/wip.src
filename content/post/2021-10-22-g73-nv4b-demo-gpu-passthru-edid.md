@@ -427,3 +427,5 @@ See the function [nvkm_devinit_preinit](https://lxr.missinglinkelectronics.com/l
 ### **Running the demo:**
 
 The driver program can be found [here](https://github.com/asurati/x04/blob/nv_edid/dev/nv/nv.c).
+
+---

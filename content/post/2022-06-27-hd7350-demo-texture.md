@@ -162,3 +162,5 @@ the top-left corner of the ViewPort-square, resulting in a flipped image on
 the ViewPort. The remedy is to flip the V-axis of the source image being used
 as the texture.
 See also [here](https://learnopengl.com/Getting-started/Textures).
+
+---

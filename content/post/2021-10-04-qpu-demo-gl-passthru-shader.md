@@ -227,7 +227,7 @@ v3dirqh: errstat 1000, intctl 0, dbqitc c00
 v3dirqh: errstat 1000, intctl 1, dbqitc 3ff
 ```
 
-The first interrupt is raised because the Coordinate Shader requested for 
+The first interrupt is raised because the Coordinate Shader requested for
 interrupting the host. The second is raised when the Tile-Binning is complete.
 The third is raised because the Vertex and Fragment Shaders requested for
 interrupting the host. The fourth is raised for an additional reason - the
@@ -235,3 +235,5 @@ completion of Tile-Rendering phase.
 
 The Frame Buffer image remains the same as before,
 found [here](/wip/images/d50.png).
+
+---
