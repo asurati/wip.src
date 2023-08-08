@@ -203,6 +203,7 @@ arguments, the state is:
     | after arg-substitution
     v---
     G(0)
+    +---
     | after arg-substitution
     v-
     42
