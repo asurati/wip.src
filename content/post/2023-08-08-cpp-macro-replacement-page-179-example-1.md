@@ -77,11 +77,11 @@ The macro takes no parameters, and is provided with no arguments. Its
 replacement-list is just `(`.
 
 ```
-    LPAREN()        (rest is empty)
-    ---+----
-       |
-    ---v----
-       (
+    LPAREN()    (rest is empty)
+    +-------
+    |
+    v
+    (
 ```
 
 The CPP rescans the token-sequence `(`. The token for the symbol `(` is not
@@ -147,11 +147,11 @@ After the parameters are substituted with the corresponding, expanded
 arguments, the state is:
 
 ```
-    F(LPAREN(), 0, <:-)             (rest is ;)
-    --------+----------
-            | after arg-substitution
-       -----v------    
-           G(0)                     (rest is ;)
+    F(LPAREN(), 0, <:-)     (rest is ;)
+    +------------------
+    | after arg-substitution
+    v---
+    G(0)
 ```
 
 The state of the `active-macro-stack-#0` is:
@@ -198,14 +198,14 @@ After the parameters are substituted with the corresponding, expanded
 arguments, the state is:
 
 ```
-    F(LPAREN(), 0, <:-)             (rest is ;)
-    --------+----------
-            | after arg-substitution
-       -----v------    
-           G(0)
-            | after arg-substitution
-       -----v------    
-           42
+    F(LPAREN(), 0, <:-)     (rest is ;)
+    +------------------
+    | after arg-substitution
+    v---
+    G(0)
+    | after arg-substitution
+    v-
+    42
 ```
 
 The state of the `active-macro-stack-#0` is:
@@ -255,3 +255,9 @@ Hence, the CPP outputs:
 ```c
 int x = 42;
 ```
+
+### **Notes**
+
+The expansion of the `__VA_OPT__` parameter is carried out using the same
+active-macro-stack as the one on which the `__VA_OPT__`-containing
+macro-invocation resides.

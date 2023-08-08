@@ -10,7 +10,7 @@ tags:
 ---
 
 The [C2X](https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3096.pdf)
-standard gives an example of a case where . . . 
+standard gives an example of a case where . . .
 > . . . it is not clear whether a replacement is nested or not.
 
 Below is the example, in some detail, to expose the ambiguity.
@@ -61,11 +61,11 @@ After substituting the argument into the replacement-list of the macro
 `f`, the situation is as shown below:
 
 ```
-          f(2)       rest
-        ---+---     --+--
-           |          |
-        ---v---     --v--
-          2*g        rest
+    f(2)     rest
+    +---     +---
+    |        |
+    v---     v---
+    2*g      rest
 ```
 
 The CPP now rescans the token-sequence `2*g`. The tokens for the symbols `2`
@@ -93,17 +93,16 @@ invocation. The ambiguity arises exactly at this point.
 One way to think about this situation is as described below:
 
 ```
-          f(2)       (9)  <--- rest of the tokens
-        ---+---     --+--
-           |          |
-        ---v---     --v--
-          2*g   ->   (9)
+    f(2)     (9)  <--- rest of the tokens
+    +---     +--
+    |        |
+    v--      v--
+    2*g  ->  (9)
 
 
 
-
-                    g(9)
-                  ---+---
+             g(9)
+             +---
 ```
 
 The token for the identifier `g` can be thought of as moving **out**
@@ -148,11 +147,11 @@ argument into the replacement-list of the macro `g`, the situation is as
 shown below:
 
 ```
-                    g(9)        rest is empty
-                  ---+---
-                     |
-                  ---v---
-                    f(9)
+    g(9)        rest is empty
+    +---
+    |
+    v---
+    f(9)
 ```
 
 The CPP now rescans the token-sequence `f(9)`. The identifier `f` is part of
@@ -185,14 +184,14 @@ argument into the replacement-list of the macro `f`, the situation is as
 shown below:
 
 ```
-                    g(9)        (rest is empty)
-                  ---+---
-                     |
-                  ---v---
-                    f(9)
-                     |
-                  ---v---
-                    9*g
+    g(9)        (rest is empty)
+    +---
+    |
+    v---
+    f(9)
+    |
+    v--
+    9*g
 ```
 
 The CPP now rescans the token-sequence `9*g`. The tokens for `9` and `*` are
@@ -218,17 +217,16 @@ The output, then, is `2*9*g`.
 Another way to think about the same situation is as described below:
 
 ```
-          f(2)       (9)  <--- rest of the tokens
-        ---+---     --+--
-           |          |
-        ---v---     --v--
-          2*g   <-   (9)
+    f(2)     (9)  <--- rest of the tokens
+    +---     +--
+    |        |
+    v---     v--
+    2*g  <-  (9)
 
 
 
-
-         g(9)
-        ---+---
+    g(9)
+    +---
 ```
 
 The token-sequence `(9)` can be thought of as moving **into** (marked in the
@@ -257,20 +255,19 @@ argument into the replacement-list of the macro `g`, the situation is as
 shown below:
 
 ```
-          f(2)       (9)  <--- rest of the tokens
-        ---+---     --+--
-           |          |
-        ---v---     --v--
-          2*g   <-   (9)
+    f(2)     (9)  <--- rest of the tokens
+    +---     +--
+    |        |
+    v---     v--
+    2*g  <-  (9)
 
 
 
-
-         g(9)       (rest is empty)
-        ---+---
-           |
-        ---v---
-         f(9)
+    g(9)       (rest is empty)
+    +---
+    |
+    v---
+    f(9)
 ```
 
 The CPP now rescans the token-sequence `f(9)`. The identifier `f` is part of
