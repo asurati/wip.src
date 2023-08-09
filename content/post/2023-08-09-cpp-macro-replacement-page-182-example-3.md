@@ -44,9 +44,6 @@ char c[2][6] = { str(hello), str() };
 
 ### <ins>Expansion of `f(y+1)`</ins>
 
-The argument `y+1` is expanded to itself, since the identifier `y` isn't the
-name of any macro, and the symbols `+` and `1` are not subject to expansion.
-
 The CPP pushes on the currently empty `active-macro-stack-#0` an entry
 corresponding to the invocation `f(y+1)`:
 
@@ -56,6 +53,9 @@ corresponding to the invocation `f(y+1)`:
     f(y+1)    <---- bottom of the stack
     -----------------------------------
 ```
+
+The argument `y+1` is expanded to itself, since the identifier `y` isn't the
+name of any macro, and the symbols `+` and `1` are not subject to expansion.
 
 After argument-substitution, the state is:
 
