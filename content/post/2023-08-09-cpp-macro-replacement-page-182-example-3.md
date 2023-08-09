@@ -864,6 +864,11 @@ In short:
     | after arg-substitution
     v---
     m(w)
+    +---
+    | after arg-substitution
+    v---
+    m(0,1)
+    M(0,1)    <--- mark m for non-replacement.
 ```
 
 The argument `w` is expanded to `0,1`. The identifier `m` is marked to prevent
@@ -886,5 +891,5 @@ simple enough.
 
 The argument expansions run on separate active-macro-stacks. Any token that is
 marked for non-replacement within the tokens of the argument expansion, retains
-its mark, even if substituted into parent-construct's replacement-lists and
+its mark, even if substituted into parent-constructs' replacement-lists and
 then rescanned.
