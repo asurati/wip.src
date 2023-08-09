@@ -732,6 +732,7 @@ After rescanning,
     | after arg-substitution
     v---------
     f(\~{ } 5)
+    +---------
     | after arg-substitution
     v---------------
     f(x * (\~{ } 5))
@@ -745,6 +746,7 @@ After rescanning,
     | after arg-substitution
     v---------
     f(\~{ } 5)
+    +---------
     | after arg-substitution
     v---------------
     f(x * (\~{ } 5))
@@ -800,6 +802,7 @@ The identifier `f` is allowed replacement. The argument `w` is expanded to
     | after arg-substitution
     v---
     f(w)
+    +---
     | after arg-substitution
     v-----------
     f(x * (0,1))
@@ -813,6 +816,7 @@ After rescanning,
     | after arg-substitution
     v---
     f(w)
+    +---
     | after arg-substitution
     v-----------
     f(x * (0,1))

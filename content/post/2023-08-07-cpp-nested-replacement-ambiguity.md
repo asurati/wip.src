@@ -189,6 +189,7 @@ shown below:
     |
     v---
     f(9)
+    +---
     |
     v--
     9*g
@@ -302,7 +303,7 @@ influence.
 
 ---
 
-*Section 6.10.4.4* of the document defines these options/behaviors as
+*Section 6.10.4.4* of the document declares these options/behaviors as
 `unspecified behavior`:
 
 > behavior, that results from the use of an unspecified value, or other
