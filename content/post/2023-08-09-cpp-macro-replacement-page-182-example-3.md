@@ -333,7 +333,7 @@ macro `f`:
     +------
     | after arg-subsitution
     v---------------------
-    f(x * F(2 * (Z[0]+1)))
+    f(x * (F(2 * (Z[0]+1))))
 ```
 
 The CPP now rescans the token-sequence `f(x * F(2 * (Z[0]+1)))`. The first
@@ -346,8 +346,8 @@ for non-replacement.
     +------
     | after arg-subsitution
     v---------------------
-    f(x * F(2 * (Z[0]+1)))
-    F(x * F(2 * (Z[0]+1)))    <--- mark f for non-replacement
+    f(x * (F(2 * (Z[0]+1))))
+    F(x * (F(2 * (Z[0]+1))))    <--- mark f for non-replacement
 ```
 
 Since the identifier `x` doesn't match with the name of any active
@@ -359,9 +359,9 @@ to be replaced. Its replacement is just `2`.
     +------
     | after arg-subsitution
     v---------------------
-    f(x * F(2 * (Z[0]+1)))
-    F(x * F(2 * (Z[0]+1)))    <--- mark f for non-replacement
-    F(2 * F(2 * (Z[0]+1)))    <--- replace x by 2
+    f(x * (F(2 * (Z[0]+1))))
+    F(x * (F(2 * (Z[0]+1))))    <--- mark f for non-replacement
+    F(2 * (F(2 * (Z[0]+1))))    <--- replace x by 2
 ```
 
 The CPP now moves out of the boundaries of the replacement-list of the
@@ -371,7 +371,7 @@ the stack is now empty.
 
 The cumulative output until now is:
 
-`F(2 * (y+1)) +  F(2 * F(2 * (Z[0]+1)))`.
+`F(2 * (y+1)) +  F(2 * (F(2 * (Z[0]+1))))`.
 
 The `rest` begins with `%`. That symbol is output as it is. Then follows the
 invocation `t(t(g)(0) + t)`, with `(1); . . .` as the `rest`.
@@ -514,7 +514,7 @@ After argument-substitution:
     +---
     | after arg-substitution
     v-----------
-    f(x * (0+1))
+    f(x * (0))
 ```
 
 The process now follows similar to other expansions of the macro `f` described
@@ -525,9 +525,9 @@ above:
     +---
     | after arg-substitution
     v-----------
-    f(x * (0+1))
-    F(x * (0+1))    <--- mark f for non-replacement
-    F(2 * (0+1))    <--- replace x by 2
+    f(x * (0))
+    F(x * (0))    <--- mark f for non-replacement
+    F(2 * (0))    <--- replace x by 2
 ```
 
 With this, the CPP moves out of the boundaries of the replacement-list of the
@@ -541,11 +541,11 @@ with the name of the macro `t`, but the macro is function-like, and here
 there's nothing beyond `t` in the invocation. Hence, the token for the
 identifier `t` is allowed replacement during further rescanning.
 
-The output is: `F(2 * (0+1)) + t`.
+The output is: `F(2 * (0)) + t`.
 
 The cumulative output until now is:
 
-`F(2 * (y+1)) +  F(2 * F(2 * (Z[0]+1))) % F(2 * (0+1)) + t`.
+`F(2 * (y+1)) +  F(2 * (F(2 * (Z[0]+1)))) % F(2 * (0)) + t`.
 
 ---
 
@@ -566,10 +566,10 @@ macro `t`:
     +-------------
     | after arg-substitution
     v---------------
-    F(2 * (0+1)) + t
+    F(2 * (0)) + t
 ```
 
-The CPP now rescans the token-sequences `F(2 * (0+1)) + t`. The identifier `f`
+The CPP now rescans the token-sequences `F(2 * (0)) + t`. The identifier `f`
 is already marked for no-replacement. The identifier `t` matches the name of an
 active macro, `t` itself, as evident from the state of the
 `active-macro-stack-#0`. Hence this token for the identifier `t` is marked for
@@ -580,8 +580,8 @@ non-replacement.
     +-------------
     | after arg-substitution
     v---------------
-    F(2 * (0+1)) + t
-    F(2 * (0+1)) + T    <--- mark t for non-replacement
+    F(2 * (0)) + t
+    F(2 * (0)) + T    <--- mark t for non-replacement
 ```
 
 The CPP now moves out of the boundaries of the replacement-list of the
@@ -592,7 +592,7 @@ The `rest` is `(1);<new-line>g(x+ . . . `. The next macro-invocation is for
 the macro `g`.
 
 The cumulative output until now is:
-`F(2 * (y+1)) +  F(2 * F(2 * (Z[0]+1))) % F(2 * (0+1)) + T(1);<new-line>`.
+`F(2 * (y+1)) +  F(2 * (F(2 * (Z[0]+1)))) % F(2 * (0)) + T(1);<new-line>`.
 
 ---
 
@@ -682,7 +682,7 @@ the stack is now empty.
 
 The cumulative output until now is:
 
-`F(2 * (y+1)) +  F(2 * F(2 * (Z[0]+1))) % F(2 * (0+1)) + T(1);`<br>
+`F(2 * (y+1)) +  F(2 * (F(2 * (Z[0]+1)))) % F(2 * (0)) + T(1);`<br>
 `F(2 * (2+(3,4)-0,1))`.
 
 The `rest` begins with `|`. That symbol is output as is. The `rest` is now
@@ -770,7 +770,7 @@ The `active-macro-stack-#0` becomes empty.
 
 The cumulative output until now is:
 
-`F(2 * (y+1)) +  F(2 * F(2 * (Z[0]+1))) % F(2 * (0+1)) + T(1);`<br>
+`F(2 * (y+1)) +  F(2 * (F(2 * (Z[0]+1)))) % F(2 * (0)) + T(1);`<br>
 `F(2 * (2+(3,4)-0,1)) | F(2 * (\~{ } 5))`.
 
 The `rest` consists of `& m (f)^m(m); . . .`.
@@ -840,7 +840,7 @@ macro-invocations `f(w)` and `m(f)`. The `active-macro-stack-#0` is now empty.
 
 The cumulative output until now is:
 
-`F(2 * (y+1)) +  F(2 * F(2 * (Z[0]+1))) % F(2 * (0+1)) + T(1);`<br>
+`F(2 * (y+1)) +  F(2 * (F(2 * (Z[0]+1)))) % F(2 * (0)) + T(1);`<br>
 `F(2 * (2+(3,4)-0,1)) | F(2 * (\~{ } 5)) & F(2 * (0,1))`.
 
 The `rest` consists of `^m(m); . . .`
@@ -879,7 +879,7 @@ macro-invocation `m(m)`. The `active-macro-stack-#0` is now empty.
 
 The cumulative output until now is:
 
-`F(2 * (y+1)) +  F(2 * F(2 * (Z[0]+1))) % F(2 * (0+1)) + T(1);`<br>
+`F(2 * (y+1)) +  F(2 * (F(2 * (Z[0]+1)))) % F(2 * (0)) + T(1);`<br>
 `F(2 * (2+(3,4)-0,1)) | F(2 * (\~{ } 5)) & F(2 * (0,1))^m(0,1);`.
 
 The `rest` still has two source lines worth of macro invocations, but they are
