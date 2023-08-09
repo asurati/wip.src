@@ -770,7 +770,8 @@ After rescanning,
 ```
 
 The CPP moves out of the boundaries of the replacement-lists of both the
-macros `f` and `g`. The `active-macro-stack-#0` becomes empty.
+macro-invocations `f(\~{ } 5)` and `g(\~{ }5)`.
+The `active-macro-stack-#0` becomes empty.
 
 The cumulative output until now is:
 
