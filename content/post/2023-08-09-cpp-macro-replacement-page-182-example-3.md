@@ -212,7 +212,7 @@ corresponding to the invocation `z`.
     // active-macro-stack-#2
 
     z    <---- bottom of the stack
-    ---------------------------------
+    ------------------------------
 ```
 
 Now towards expanding `z`:
@@ -335,7 +335,7 @@ macro `f`:
     f(f(z))     (rest is:   % t(t(g) . . .)
     +------
     | after arg-subsitution
-    v---------------------
+    v-----------------------
     f(x * (F(2 * (Z[0]+1))))
 ```
 
@@ -348,7 +348,7 @@ for non-replacement.
     f(f(z))     (rest is:   % t(t(g) . . .)
     +------
     | after arg-subsitution
-    v---------------------
+    v-----------------------
     f(x * (F(2 * (Z[0]+1))))
     F(x * (F(2 * (Z[0]+1))))    <--- mark f for non-replacement
 ```
@@ -361,7 +361,7 @@ to be replaced. Its replacement is just `2`.
     f(f(z))     (rest is:   % t(t(g) . . .)
     +------
     | after arg-subsitution
-    v---------------------
+    v-----------------------
     f(x * (F(2 * (Z[0]+1))))
     F(x * (F(2 * (Z[0]+1))))    <--- mark f for non-replacement
     F(2 * (F(2 * (Z[0]+1))))    <--- replace x by 2
@@ -435,7 +435,7 @@ the invocation `g`
     // active-macro-stack-#4
 
     g    <---- bottom of the stack
-    ---------------------------------
+    ------------------------------
 ```
 
 ```
@@ -516,7 +516,7 @@ After argument-substitution:
     f(0)    (rest is: + t)
     +---
     | after arg-substitution
-    v-----------
+    v---------
     f(x * (0))
 ```
 
@@ -527,7 +527,7 @@ above:
     f(0)    (rest is: + t)
     +---
     | after arg-substitution
-    v-----------
+    v---------
     f(x * (0))
     F(x * (0))    <--- mark f for non-replacement
     F(2 * (0))    <--- replace x by 2
@@ -568,7 +568,7 @@ macro `t`:
     t(t(g)(0) + t)  (rest is: (1); . . .)
     +-------------
     | after arg-substitution
-    v---------------
+    v-------------
     F(2 * (0)) + t
 ```
 
@@ -582,7 +582,7 @@ non-replacement.
     t(t(g)(0) + t)  (rest is: (1); . . .)
     +-------------
     | after arg-substitution
-    v---------------
+    v-------------
     F(2 * (0)) + t
     F(2 * (0)) + T    <--- mark t for non-replacement
 ```
@@ -608,7 +608,7 @@ corresponding to the invocation `g(x+(3,4)-w)`.
     // active-macro-stack-#0
 
     g(x+(3,4)-w)    <---- bottom of the stack
-    -------------------------------------------
+    -----------------------------------------
 ```
 
 ```
@@ -642,7 +642,7 @@ corresponding to the invocation `f(2+(3,4)-0,1)`.
 
     f(2+(3,4)-0,1)    <--- top of the stack
     g(x+(3,4)-w)      <--- bottom of the stack
-    -------------------------------------------
+    ------------------------------------------
 ```
 
 After argument expansion and substitution:
@@ -675,7 +675,7 @@ macro-invocation `f(2+(3,4)-0,1)`. The corresponding entry within the
     // active-macro-stack-#0
 
     g(x+(3,4)-w)      <--- bottom of the stack
-    -------------------------------------------
+    ------------------------------------------
 ```
 
 But with that, the CPP also moves out of the boundaries of the
@@ -719,7 +719,7 @@ After rescanning, and choosing
     // active-macro-stack-#0
 
     g(\~{ } 5)    <--- bottom of the stack
-    -----------------------------
+    --------------------------------------
 ```
 
 ```
@@ -737,7 +737,7 @@ After rescanning,
 
     f(\~{ } 5)    <--- top of the stack
     g(\~{ } 5)    <--- bottom of the stack
-    -----------------------------
+    --------------------------------------
 ```
 
 ```
@@ -788,7 +788,7 @@ In short:
     // active-macro-stack-#0
 
     m(f)    <--- bottom of the stack
-    -----------------------------
+    --------------------------------
 ```
 
 ```
@@ -807,7 +807,7 @@ The identifier `f` is allowed replacement. The argument `w` is expanded to
 
     f(w)    <--- top of the stack
     m(f)    <--- bottom of the stack
-    -----------------------------
+    --------------------------------
 ```
 
 ```
@@ -858,7 +858,7 @@ In short:
     // active-macro-stack-#0
 
     m(m)    <--- bottom of the stack
-    -----------------------------
+    --------------------------------
 ```
 
 ```
@@ -869,7 +869,7 @@ In short:
     m(w)
     +---
     | after arg-substitution
-    v---
+    v-----
     m(0,1)
     M(0,1)    <--- mark m for non-replacement.
 ```
