@@ -880,7 +880,7 @@ macro-invocation `m(m)`. The `active-macro-stack-#0` is now empty.
 The cumulative output until now is:
 
 `F(2 * (y+1)) +  F(2 * (F(2 * (Z[0]+1)))) % F(2 * (0)) + T(1);`<br>
-`F(2 * (2+(3,4)-0,1)) | F(2 * (\~{ } 5)) & F(2 * (0,1))^m(0,1);`.
+`F(2 * (2+(3,4)-0,1)) | F(2 * (\~{ } 5)) & F(2 * (0,1))^M(0,1);`.
 
 The `rest` still has two source lines worth of macro invocations, but they are
 simple enough.
