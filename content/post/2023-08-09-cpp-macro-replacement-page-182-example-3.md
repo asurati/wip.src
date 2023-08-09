@@ -82,15 +82,16 @@ identifiers are written in `CAPITAL`. The current state of expansion is:
 
 Since `F` is marked for non-replacement, the token-sequence `(x * (y+1))` isn't
 considered to be a part of the invocation of the macro `f`. The CPP moves ahead
-and reaches `x`. Although the macro named `x` is defined, undefined and then
-redefined, the definition that is active is the latest one defined before the
-tokens being currently expanded. Accordingly, `x` is expanded to `2`, as shown
-below.
+and reaches `x`. Although a macro named `x` is defined, undefined and then
+redefined, the definition that is active is the latest one defined lexically
+before the tokens currently being expanded. Accordingly, `x` is expanded to `2`
+, as shown below.
 
 The identifier `x` is the name of an obj-like macro. It also doesn't match with
-the names of any active macro at this point. Hence, the token for the
-identifier `x` is allowed replacement. The CPP pushes on to the
-`active-macro-stack-#0` an entry for the macro `x`:
+the name of any active macro, as evident from the state of the
+`active-macro-stack-#0`. Hence, this token for the identifier `x` is allowed
+replacement. The CPP pushes on to the `active-macro-stack-#0`
+an entry for the macro-invocation `x`:
 
 ```
     // active-macro-stack-#0
@@ -113,11 +114,13 @@ The replacement-list of the macro `x` is just `2`:
       v
       2
 ```
-The CPP now rescans the token `2`. The token isn't subject to more replacement.
-Thus, the expansion of the macro `x` is `2`. The CPP will move out of the
-boundaries of the replacement-list of the macro `x`, with no other
-processing related to that macro pending. As a result, the CPP pops off the
-entry for the macro `x` from the `active-macro-stack-#0`. The state is:
+The CPP now rescans the token `2`. The token isn't subject to replacement.
+Thus, the expansion of the macro-invocation `x` is `2`. The CPP will move out
+of the boundaries of the replacement-list of the macro-invocation `x`, with no
+other processing related to that invocation pending. The corresponding entry
+within the `active-macro-stack-#0` is popped off.
+
+The state is:
 
 ```
     // active-macro-stack-#0
@@ -137,14 +140,15 @@ entry for the macro `x` from the `active-macro-stack-#0`. The state is:
 ```
 
 The token-sequence `* (y+1))` remains as it is. With that, the CPP now moves
-out of the boundaries of the replacement-list of the macro `f(y+1)`, with no
-other processing related to that macro pending. The corresponding entry within
-the `active-macro-stack-#0` is popped off, and the stack is now empty.
+out of the boundaries of the replacement-list of the macro-invocation `f(y+1)`,
+with no other processing related to that invocation pending. The corresponding
+entry within the `active-macro-stack-#0` is popped off, and the stack is now
+empty.
 
-The output at this stage is
+The output at this stage is: `F(2 * (y+1))`.
 
-`F(2 * (y+1))`. (note that the capital letters only say that the token was
-marked for non-replacement. The output of the CPP implementation will be
+(Note that the capital letters only declare that the token was
+marked for non-replacement. The actual output of a CPP implementation will be
 `f(2 * (y+1))`.)
 
 The `rest` begins with `+`. That symbol is output as it is. Then follows the
@@ -169,7 +173,7 @@ corresponding to the invocation `f(f(z))`.
     +------
 ```
 
-The argument is `f(z)`. Hence we must first fully expand it, over a new
+The argument is `f(z)`. It must be fully expanded, over a new
 active-macro-stack, before proceeding.
 
 ---
@@ -191,7 +195,7 @@ corresponding to the invocation `f(z)`.
     +---
 ```
 
-The argument is `z`, which is the name of an object-like macro. Hence, it must
+The argument is `z`, which is the name of an object-like macro. It must
 be fully expanded, over a new active-macro-stack, before proceeding.
 
 ---
@@ -218,13 +222,13 @@ Now towards expanding `z`:
     z[0]
 ```
 The CPP now rescans the token-sequence `z[0]`. The identifier `z` matches the
-name of a currently active macro, `z` itself, as evident from the
+name of an active macro, `z` itself, as evident from the
 `active-macro-stack-#2`. Hence, this token of the identifier `z` is marked for
 non-replacement. Note that this token will be substituted in the expansions of
 `f(z)` and of `f(f(z))`. These substitutions doesn't change the fact that this
 token is marked for non-replacement. The rescanning that will occur once the
-processing of macros `f(z)` and `f(f(z))` resumes will not expand this token
-again. The mark is persistent.
+processing of macros `f(z)` and `f(f(z))` resumes will not expand this token.
+The mark is persistent.
 
 ```
     z   (rest is:  empty)
@@ -236,9 +240,9 @@ again. The mark is persistent.
 ```
 
 The token-sequence `[0]` is output as it is, without change. With that, the CPP
-moves out of the boundaries of the replacement-list of the macro `z`, with no
-other processing for that macro pending. As a result, the entry for the macro
-is removed from `active-macro-stack-#2`; the stack is now empty.
+moves out of the boundaries of the replacement-list of the macro-invocation
+`z`, with no other processing for that invocation pending. The corresponding
+entry within the `active-macro-stack-#2` is popped off; the stack is now empty.
 
 ---
 
@@ -262,8 +266,8 @@ macro `f`:
     f(x * (Z[0]+1))
 ```
 
-The CPP now rescans the token-sequence `f(x * (z[0]+1))`. Since the identifier
-`f` matches with the name of a currently active macro, `f` itself, as evident
+The CPP now rescans the token-sequence `f(x * (Z[0]+1))`. Since the identifier
+`f` matches with the name of an active macro, `f` itself, as evident
 from the `active-macro-stack-#1`, this token for the identifier `f` is marked
 for non-replacement. Note that this token will make its way through to the
 replacement-list of `f(f(z))`; even there this token will remain
@@ -281,9 +285,9 @@ non-replaceable.
 The token-sequence `(x * (Z[0]+1))` therefore doesn't form a macro-invocation
 of the macro `f`.
 
-Since the identifier `x` doesn't match with the name of any currently active
-macro, as evident from the `active-macro-stack-#1`, it is allowed to be
-replaced. Its replacement is just `2`.
+Since the identifier `x` doesn't match with the name of any active
+macro, as evident from the state of the `active-macro-stack-#1`, it is allowed
+to be replaced. Its replacement is just `2`.
 
 ```
     f(z)    (rest is:   % t(t(g) . . .)
@@ -299,11 +303,11 @@ Since the identifier `z` is marked for non-replacement, it is not considered
 for replacement.
 
 The CPP now moves out of the boundaries of the replacement-list of the
-macro-invocation `f(z)`, with no other processing for that macro pending.
-The entry for the macro in the `active-macro-stack-#1` is popped off; the stack
-is now empty.
+macro-invocation `f(z)`, with no other processing for that invocation pending.
+The corresponding entry within the `active-macro-stack-#1` is popped off;
+the stack is now empty.
 
-The output at this stage is `F(2 * (Z[0]+1))`.
+The output at this stage is: `F(2 * (Z[0]+1))`.
 
 ---
 
@@ -346,9 +350,9 @@ for non-replacement.
     F(x * F(2 * (Z[0]+1)))    <--- mark f for non-replacement
 ```
 
-Since the identifier `x` doesn't match with the name of any currently active
-macro, as evident from the `active-macro-stack-#1`, it is allowed to be
-replaced. Its replacement is just `2`.
+Since the identifier `x` doesn't match with the name of any active
+macro, as evident from the state of the `active-macro-stack-#1`, it is allowed
+to be replaced. Its replacement is just `2`.
 
 ```
     f(f(z))     (rest is:   % t(t(g) . . .)
@@ -362,8 +366,8 @@ replaced. Its replacement is just `2`.
 
 The CPP now moves out of the boundaries of the replacement-list of the
 macro-invocation `f(f(z))`, with no other processing for that macro pending.
-The entry for the macro in the `active-macro-stack-#0` is popped off; the stack
-is now empty.
+The corresponding entry within the `active-macro-stack-#0` is popped off;
+the stack is now empty.
 
 The cumulative output until now is:
 
@@ -376,8 +380,8 @@ invocation `t(t(g)(0) + t)`, with `(1); . . .` as the `rest`.
 
 ### <ins>Expansion of `t(t(g)(0) + t)`</ins>
 
-The CPP pushes on to the now empty active-macro-stack-#0 an entry corresponding
-to the invocation `t(t(g)(0) + t)`
+The CPP pushes on to the now empty `active-macro-stack-#0` an entry
+corresponding to the macro-invocation `t(t(g)(0) + t)`
 
 ```
     // active-macro-stack-#0
@@ -391,7 +395,7 @@ to the invocation `t(t(g)(0) + t)`
     +-------------
 ```
 
-The argument is `t(g)(0) + t`. Hence it must first be fully expanded,
+The argument is `t(g)(0) + t`. It must first be fully expanded,
 over a new active-macro-stack, before proceeding.
 
 ---
@@ -414,7 +418,7 @@ the invocation `t(g)`, with `(0) + t` as `rest`.
 ```
 
 The argument is `g`, which is the name of an object-like macro.
-Hence, it must be fully expanded, over a new active-macro-stack, before
+It must be fully expanded, over a new active-macro-stack, before
 proceeding.
 
 ---
@@ -448,9 +452,10 @@ Now towards expanding `g`:
 The expansion of `g` is `f`. The CPP now rescans the token `f`. The identifier
 `f` does not match with the name of any active macro, as evident from the
 `active-macro-stack-#4`. Hence, this token for the identifier `f` is allowed
-replacement. But the `rest` here is empty. The CPP moves out of the boundaries
-of the replacement-list of the macro `g`. The entry on the
-`active-macro-stack-#4` for the macro is popped off; the stack is now empty.
+replacement. The identifier `f` matches with the name of a function-like macro,
+but the `rest` here is empty. The CPP now moves out of the boundaries of the
+replacement-list of the macro-invocation `g`. The corresponding entry within
+the `active-macro-stack-#0` is popped off;the stack is now empty.
 
 ---
 
@@ -463,6 +468,9 @@ of the replacement-list of the macro `g`. The entry on the
     ---------------------------------
 ```
 
+The fully expanded argument is substituted into the replacement-list of the
+macro `t`:
+
 ```
     t(g)    (rest is: (0) + t)
     +---
@@ -472,17 +480,16 @@ of the replacement-list of the macro `g`. The entry on the
 ```
 
 The CPP now rescans the token `f`. It arrived from the expansion of the
-argument `g`, with its ability to be replaced intact. Even here, the identifier
-`f` doesn't match with any active macro, as evident by the state of the
-`active-macro-stack-#3`.
+argument `g`, with its ability to be replaced intact. The identifier
+`f` doesn't match with the name of any active macro, as evident from the
+state of the `active-macro-stack-#3`.
 
 The identifier `f` matches the name of a function-like macro, and looking ahead
-into the `rest`, the CPP can see that it can construct a complete invocation of
-that macro. Here the point of ambiguity, as described in the
+into the `rest`, the CPP can construct a complete invocation of
+that macro in the form `f(0)`. Here the point of ambiguity, as described in the
 [post](http://localhost:1313/wip/post/2023/08/07/cpp-nested-replacement-ambiguity),
-arises. Choosing the 
-[Option 1](http://localhost:1313/wip/post/2023/08/07/cpp-nested-replacement-ambiguity/#option-1)
-from the two choices, the identifier `f` is donated out
+arises. Choosing [Option 1](http://localhost:1313/wip/post/2023/08/07/cpp-nested-replacement-ambiguity/#option-1),
+the identifier `f` is donated out
 of the influence of the `t(g)` macro-invocation. As a result, the entry
 corresponding to the invocation `t(g)` is popped off the
 `active-macro-stack-#3` and an entry corresponding to the invocation `f(0)` is
@@ -524,15 +531,15 @@ above:
 ```
 
 With this, the CPP moves out of the boundaries of the replacement-list of the
-invocation `f(0)`. The entry on the `active-macro-stack-#3` for the macro is
-popped off; the stack is now empty.
+macro-invocation `f(0)`. The corresponding entry within
+the `active-macro-stack-#3` is popped off; the stack is now empty.
 
 The `rest` consists of token-sequence `+ t`. That sequence is expanded as is.
-The identifier `t` does not match with the name of any active macro, as evident
-by the `active-macro-stack-#3`; the stack is empty. It does match with the name
-of the macro `t`, but the macro is function-like, and here there's nothing
-beyond `t` in the invocation. Hence, the token for the identifier `t` is
-allowed replacement during further rescanning.
+The identifier `t` does not match with the name of any active macro,
+as evident by the `active-macro-stack-#3`; the stack is empty. It does match
+with the name of the macro `t`, but the macro is function-like, and here
+there's nothing beyond `t` in the invocation. Hence, the token for the
+identifier `t` is allowed replacement during further rescanning.
 
 The output is: `F(2 * (0+1)) + t`.
 
@@ -551,6 +558,9 @@ The cumulative output until now is:
     -------------------------------------------
 ```
 
+The fully expanded argument is substituted into the replacement-list of the
+macro `t`:
+
 ```
     t(t(g)(0) + t)  (rest is: (1); . . .)
     +-------------
@@ -558,11 +568,12 @@ The cumulative output until now is:
     v---------------
     F(2 * (0+1)) + t
 ```
+
 The CPP now rescans the token-sequences `F(2 * (0+1)) + t`. The identifier `f`
 is already marked for no-replacement. The identifier `t` matches the name of an
 active macro, `t` itself, as evident from the state of the
-`active-macro-stack-#0`. Hence this token for the identifier `t` is marked to
-prevent its replacement.
+`active-macro-stack-#0`. Hence this token for the identifier `t` is marked for
+non-replacement.
 
 ```
     t(t(g)(0) + t)  (rest is: (1); . . .)
@@ -574,10 +585,10 @@ prevent its replacement.
 ```
 
 The CPP now moves out of the boundaries of the replacement-list of the
-invocation `t(t(g)(0) + t)`. As a result, the entry on the
+macro-invocation `t(t(g)(0) + t)`. The corresponding entry within the
 `active-macro-stack-#0` is popped off; the stack becomes empty.
 
-The `rest` is `(1);<new-line>g(x+ . . . `. The next macro invocation is for
+The `rest` is `(1);<new-line>g(x+ . . . `. The next macro-invocation is for
 the macro `g`.
 
 The cumulative output until now is:
@@ -618,7 +629,7 @@ the `active-macro-stack-#0`. Hence, this token for the identifier `f` is
 eligible for replacement.
 
 The token-sequence corresponds to a complete invocation of the macro `f`,
-without even looking ahead into the `rest` of the source file.
+without looking ahead into the `rest` of the source file.
 
 The CPP therefore pushes an entry on to the `active-macro-stack-#0`
 corresponding to the invocation `f(2+(3,4)-0,1)`.
@@ -654,7 +665,7 @@ After rescanning:
 ```
 
 With this, the CPP moves out of the boundaries of the replacement-list of the
-invocation `f(2+(3,4)-0,1)`. The corresponding entry on the
+macro-invocation `f(2+(3,4)-0,1)`. The corresponding entry within the
 `active-macro-stack-#0` is popped off.
 
 ```
@@ -664,10 +675,10 @@ invocation `f(2+(3,4)-0,1)`. The corresponding entry on the
     -------------------------------------------
 ```
 
-But with that, the CPP moves out of the boundaries of the replacement-list of
-the invocation `g(x+(3,4)-w)`. The corresponding entry on the
-`active-macro-stack-#0` is popped off; the stack is now empty.
-
+But with that, the CPP also moves out of the boundaries of the
+replacement-list of the macro-invocation `g(x+(3,4)-w)`.
+The corresponding entry on the `active-macro-stack-#0` is popped off;
+the stack is now empty.
 
 The cumulative output until now is:
 
@@ -699,7 +710,7 @@ In short:
 ```
 
 After rescanning, and choosing
-[Option 1](http://localhost:1313/wip/post/2023/08/07/cpp-nested-replacement-ambiguity/#option-1)
+[Option 1](http://localhost:1313/wip/post/2023/08/07/cpp-nested-replacement-ambiguity/#option-1):
 
 ```
     // active-macro-stack-#0
@@ -825,7 +836,7 @@ After rescanning,
 ```
 
 The CPP now moves out of the boundaries of the replacement-list of both the
-invocations `f(w)` and `m(f)`. The `active-macro-stack-#0` is empty.
+macro-invocations `f(w)` and `m(f)`. The `active-macro-stack-#0` is now empty.
 
 The cumulative output until now is:
 
@@ -855,11 +866,11 @@ In short:
     m(w)
 ```
 
-The identifier `m` is marked to prevent replacement.
-The argument `w` is expanded to `0,1`.
+The argument `w` is expanded to `0,1`. The identifier `m` is marked to prevent
+replacement.
 
 The CPP now moves out of the boundaries of the replacement-list of the
-invocation `m(m)`. The `active-macro-stack-#0` is empty.
+macro-invocation `m(m)`. The `active-macro-stack-#0` is now empty.
 
 The cumulative output until now is:
 
