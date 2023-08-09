@@ -769,8 +769,8 @@ After rescanning,
     F(2 * (\~{ } 5))    <--- replacing x by 2
 ```
 
-The CPP moves out of the boundaries of both the macros `f` and `g`.
-The `active-macro-stack-#0` becomes empty.
+The CPP moves out of the boundaries of the replacement-lists of both the
+macros `f` and `g`. The `active-macro-stack-#0` becomes empty.
 
 The cumulative output until now is:
 
