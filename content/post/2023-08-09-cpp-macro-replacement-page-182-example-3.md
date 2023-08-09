@@ -67,7 +67,7 @@ After argument-substitution, the state is:
     f(x * (y+1))
 ```
 
-The CPP now rescans the token-sequence `f(x * (y+1)`. The identifier `f`
+The CPP now rescans the token-sequence `f(x * (y+1))`. The identifier `f`
 matches with the name of an active macro, `f` itself. Hence, this token for the
 identifier `f` is marked to prevent its replacement. In this post, such marked
 identifiers are written in `CAPITAL`. The current state of expansion is:
