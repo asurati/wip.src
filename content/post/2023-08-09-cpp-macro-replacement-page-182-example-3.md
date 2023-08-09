@@ -228,7 +228,7 @@ The CPP now rescans the token-sequence `z[0]`. The identifier `z` matches the
 name of an active macro, `z` itself, as evident from the
 `active-macro-stack-#2`. Hence, this token of the identifier `z` is marked for
 non-replacement. Note that this token will be substituted in the expansions of
-`f(z)` and of `f(f(z))`. These substitutions doesn't change the fact that this
+`f(z)` and of `f(f(z))`. These substitutions do not change the fact that this
 token is marked for non-replacement. The rescanning that will occur once the
 processing of macros `f(z)` and `f(f(z))` resumes will not expand this token.
 The mark is persistent.
