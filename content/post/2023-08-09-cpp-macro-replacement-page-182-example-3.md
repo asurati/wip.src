@@ -68,8 +68,9 @@ After argument-substitution, the state is:
 ```
 
 The CPP now rescans the token-sequence `f(x * (y+1))`. The identifier `f`
-matches with the name of an active macro, `f` itself. Hence, this token for the
-identifier `f` is marked to prevent its replacement. In this post, such marked
+matches with the name of an active macro, `f` itself, as evident from the state
+of the `active-macro-stack-#0`. Hence, this token for the
+identifier `f` is marked for non-replacement. In this post, such marked
 identifiers are written in `CAPITAL`. The current state of expansion is:
 
 ```
@@ -77,15 +78,16 @@ identifiers are written in `CAPITAL`. The current state of expansion is:
     +-----
     | after arg-substitution
     v-----------
+    f(x * (y+1))
     F(x * (y+1))    <--- mark f for non-replacement
 ```
 
 Since `F` is marked for non-replacement, the token-sequence `(x * (y+1))` isn't
-considered to be a part of the invocation of the macro `f`. The CPP moves ahead
+considered to be a part of an invocation of the macro `f`. The CPP moves ahead
 and reaches `x`. Although a macro named `x` is defined, undefined and then
-redefined, the definition that is active is the latest one defined lexically
-before the tokens currently being expanded. Accordingly, `x` is expanded to `2`
-, as shown below.
+redefined, the definition that is active is the latest one lexically
+before the tokens currently being expanded. Accordingly, `x` is expanded to
+`2`, as shown below.
 
 The identifier `x` is the name of an obj-like macro. It also doesn't match with
 the name of any active macro, as evident from the state of the
@@ -114,6 +116,7 @@ The replacement-list of the macro `x` is just `2`:
       v
       2
 ```
+
 The CPP now rescans the token `2`. The token isn't subject to replacement.
 Thus, the expansion of the macro-invocation `x` is `2`. The CPP will move out
 of the boundaries of the replacement-list of the macro-invocation `x`, with no
