@@ -595,6 +595,7 @@ The `rest` is `(1);<new-line>g(x+ . . . `. The next macro-invocation is for
 the macro `g`.
 
 The cumulative output until now is:
+
 `F(2 * (y+1)) +  F(2 * (F(2 * (Z[0]+1)))) % F(2 * (0)) + T(1);<new-line>`.
 
 ---
