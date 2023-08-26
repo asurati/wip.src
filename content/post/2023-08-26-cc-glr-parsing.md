@@ -1928,7 +1928,7 @@ After the shift, the stack is:
 
 The choice of items in the item-set-#3345 is the reduce-item
 
-[FunctionBody -> CompoundStatement .] las: ... eof ...`,
+`[FunctionBody -> CompoundStatement .] las: ... eof ...`,
 
 with its look-ahead constraint satisfied.
 
