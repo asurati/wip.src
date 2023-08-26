@@ -1816,7 +1816,7 @@ The parse forest is:
     v                       v                 |  |     |       |  |
     TypeSpecifier           DirectDeclarator  |  |     |       |  |
     |                       |                 |  |     |       |  |
-    v                       v                 v  v     |       v  |
+    v                       v                 v  v     v       v  v
     int                     main              (  )  {  return  0  ;
 ```
 
