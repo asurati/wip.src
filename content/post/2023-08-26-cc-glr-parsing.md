@@ -2019,7 +2019,7 @@ The stack is:
     --------------------------------------------------
 ```
 
-The (complete) parse forest is:
+The (complete) parse tree is:
 
 ```
     TranslationObject
