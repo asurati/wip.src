@@ -731,7 +731,7 @@ The next token in the input, and also the current look-head for the machine, is
 now the punctuator `)`.
 
 There is no suitable reduce-item in the item-set-#4596.
-Nor is there a shift-item that can shift the token ')'. The machine cannot move
+Nor is there a shift-item that can shift the token `)`. The machine cannot move
 any more.
 
 This causes the termination of the #3.x fork of the step-#3 stack.
@@ -1415,7 +1415,7 @@ After the shift, the stack is:
 ```
 
 The next token in the input, and also the current look-head for the machine, is
-now the punctuator ';'.
+now the punctuator `;`.
 
 The choice of items in the item-set-#3324 is the reduce-item
 
@@ -1497,7 +1497,7 @@ After the shift, the stack is:
 ```
 
 The next available token in the input, and also the current look-head for the
-machine, is still the punctuator ';'.
+machine, is still the punctuator `;`.
 
 The choice of items in the item-set-#3321 is the reduce-item
 
@@ -1825,7 +1825,7 @@ The parse forest is:
 
 ### Step #20:
 
-After consuming the last input token '}', the machine arrives at the state
+After consuming the last input token `}`, the machine arrives at the state
 described below, with `CompoundStatement` as the current token.
 The input has been exhausted; hence the look-ahead for this and the subsequent
 steps is always `$`, or `eof`.
