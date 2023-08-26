@@ -9,12 +9,16 @@ tags:
 ---
 
 This post demonstrates the [GLR](https://en.wikipedia.org/wiki/GLR_parser)
-parsing of a tiny C program, with the reader assuming the role of the
-LR(1) automaton/finite-state-machine.
+parsing of a tiny C program, with the reader assuming the role of an
+[LR(1)](https://en.wikipedia.org/wiki/Canonical_LR_parser)
+automaton/finite-state-machine.
 
 The grammar constructs utilized here are adopted from the informal grammar
 description in the C2x standard, augmented with a production
-`TranslationObject -> TranslationUnit`, where `TranslationObject` is a
+
+`TranslationObject -> TranslationUnit`,
+
+where `TranslationObject` is a
 non-terminal that does not occur on the RHS of any production.
 
 The look-aheads (`las`) of an item are either not shown, or shown only
@@ -27,12 +31,12 @@ generates the
 each of which is referred to here with its index. Each item-set also represents
 the corresponding state in the finite-state-machine.
 
-For convenience, the program treats certain non-terminals, such as
+For convenience, the `lr.c` program treats certain non-terminals, such as
 `Identifier`, `StringLiteral`, and `Constant` as terminals.
 
 ---
 
-The program:
+The sample program:
 
 ``` c
 int main()
@@ -45,7 +49,7 @@ int main()
 
 ### Step #0:
 
-The parsing stack initially contains the item-set #0.
+The stack initially contains the item-set #0.
 
 ```
     #0
