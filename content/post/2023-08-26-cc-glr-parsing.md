@@ -1501,7 +1501,7 @@ machine, is still the punctuator `;`.
 
 The choice of items in the item-set-#3321 is the reduce-item
 
-[PostfixExpression -> PrimaryExpression .] las: ... ; ...`,
+`[PostfixExpression -> PrimaryExpression .] las: ... ; ...`,
 
 with its look-ahead constraint satisfied.
 
