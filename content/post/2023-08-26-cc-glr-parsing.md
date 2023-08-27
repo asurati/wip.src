@@ -512,7 +512,7 @@ The parse forest is:
 ### Step #3.5:
 
 The machine is in the state #3841, with `DeclarationSpecifier` as the
-current token. The relevant items are:
+current token.
 
 The choice of items in the item-set-#3841 are the shift-items
 
