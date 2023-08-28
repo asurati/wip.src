@@ -396,7 +396,7 @@ The parse forest is:
 The machine is in the state #3732, with `TypeSpecifier` as the
 current token.
 
-The choice of items in the item-set-#3841 is the shift-item
+The choice of items in the item-set-#3732 is the shift-item
 
 `[TypeSpecifierQualifier -> . TypeSpecifier] jump=3754`.
 
@@ -475,7 +475,7 @@ After the shift, the stack is:
 The next token in the input, and also the current look-head for the machine, is
 still the punctuator `(`.
 
-The choice of items in the item-set-#3854 is the reduce-item
+The choice of items in the item-set-#3745 is the reduce-item
 
 `[DeclarationSpecifier -> TypeSpecifierQualifier .] las: ... ( ...`,
 
@@ -659,9 +659,9 @@ current token.
 The choice of items in the item-set-#0 is the set of these shift-items
 
 ```
-[FunctionDefinition -> . DeclarationSpecifiers Declarator FunctionBody] jump=5`
-[Declaration -> . DeclarationSpecifiers ;] jump=5`
-[Declaration -> . DeclarationSpecifiers InitDeclaratorList ;] jump=5`
+[FunctionDefinition -> . DeclarationSpecifiers Declarator FunctionBody] jump=5
+[Declaration -> . DeclarationSpecifiers ;] jump=5
+[Declaration -> . DeclarationSpecifiers InitDeclaratorList ;] jump=5
 ```
 
 After the shift, the stack is:
@@ -956,7 +956,7 @@ After the fetch, the parse forest is:
     int                     main              (
 ```
 
-The choice of items in the item-set-#4557 is the set of these shift-items
+The choice of items in the item-set-#4448 is the set of these shift-items
 
 ```
 [FunctionDeclarator -> DirectDeclarator . ( )] jump=4470
@@ -1473,7 +1473,7 @@ The parse forest is:
 The machine is in the state #3704, with `PrimaryExpression` as the
 current token.
 
-The choice of items in the item-set-#3813 is the shift-item
+The choice of items in the item-set-#3704 is the shift-item
 
 `[PostfixExpression -> . PrimaryExpression] jump=3212`.
 
@@ -2139,4 +2139,5 @@ The (complete) parse tree is:
 
 ### **Update #1:** <a name="update1"></a>
 
-Regenerated after fixing a missing token in the grammar.txt
+Regenerated after fixing missing tokens in the
+[grammar.txt](https://github.com/asurati/x24)
