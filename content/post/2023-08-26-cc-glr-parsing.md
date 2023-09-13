@@ -9,6 +9,7 @@ tags:
 ---
 
 *[Update #1](#update1) on: 28th August, 2023.*
+*[Update #2](#update2) on: 13th September, 2023.*
 
 This post demonstrates the [GLR](https://en.wikipedia.org/wiki/GLR_parser)
 parsing of a tiny C program, with the reader assuming the role of an
@@ -34,7 +35,7 @@ each of which is referred to here with its index. Each item-set also represents
 the corresponding state in the finite-state-machine.
 
 For convenience, the `lr.c` program treats certain non-terminals, such as
-`Identifier`, `StringLiteral`, and `Constant` as terminals.
+`Identifier`, `StringLiteral`, and `IntegerConstant` as terminals.
 
 ---
 
@@ -70,12 +71,12 @@ After the fetch, the parse forest is:
 
 The choice of items in the item-set-#0 is the shift-item
 
- `[TypeSpecifier -> . int] jump=3762`.
+ `[TypeSpecifier -> . int] jump=3998`.
 
 After the shift, the stack is:
 
 ```
-    #3762
+    #3998
     int
     --------------------------------------------------
     #0
@@ -86,7 +87,7 @@ The next available token in the input, and also the current look-ahead for the
 machine, is the identifier `main`, known within the grammar as the token
 `Identifier`.
 
-The choice of items in the item-set-#3762 is the reduce-item
+The choice of items in the item-set-#3998 is the reduce-item
 
 `[TypeSpecifier -> int .] las: ... Identifier ...`,
 
@@ -117,12 +118,12 @@ The machine is in the state #0, with `TypeSpecifier` as the current token.
 
 The choice of items in the item-set-#0 is the shift-item
 
-`[TypeSpecifierQualifier -> . TypeSpecifier] jump=3754`.
+`[TypeSpecifierQualifier -> . TypeSpecifier] jump=3990`.
 
 After the shift, the stack is:
 
 ```
-    #3754
+    #3990
     TypeSpecifier
     --------------------------------------------------
     #0
@@ -132,7 +133,7 @@ After the shift, the stack is:
 The next available token in the input, and also the current look-head for the
 machine, is still the identifier `main`.
 
-The choice of items in the item-set-#3754 is the reduce-item
+The choice of items in the item-set-#3990 is the reduce-item
 
 `[TypeSpecifierQualifier -> TypeSpecifier .] las: ... Identifier ...`,
 
@@ -167,12 +168,12 @@ as the current token.
 
 The choice of items in the item-set-#0 is the shift-item
 
-`[DeclarationSpecifier -> . TypeSpecifierQualifier] jump=3745`.
+`[DeclarationSpecifier -> . TypeSpecifierQualifier] jump=3981`.
 
 After the shift, the stack is:
 
 ```
-    #3745
+    #3981
     TypeSpecifierQualifier
     --------------------------------------------------
     #0
@@ -182,7 +183,7 @@ After the shift, the stack is:
 The next available token in the input, and also the current look-head for the
 machine, is still the identifier `main`.
 
-The choice of items in the item-set-#3745 is the reduce-item
+The choice of items in the item-set-#3981 is the reduce-item
 
 `[DeclarationSpecifier -> TypeSpecifierQualifier .] las: ... Identifier ...`,
 
@@ -222,9 +223,9 @@ current token.
 The choice of items in the item-set-#0 are the shift-items
 
 ```
-[DeclarationSpecifiers -> . DeclarationSpecifier] jump=3732
-[DeclarationSpecifiers -> . DeclarationSpecifier AttributeSpecifierSequence] jump=3732
-[DeclarationSpecifiers -> . DeclarationSpecifier DeclarationSpecifiers] jump=3732
+[DeclarationSpecifiers -> . DeclarationSpecifier] jump=3968
+[DeclarationSpecifiers -> . DeclarationSpecifier AttributeSpecifierSequence] jump=3968
+[DeclarationSpecifiers -> . DeclarationSpecifier DeclarationSpecifiers] jump=3968
 ```
 
 Since they are concerned with shifting the same token, they all must
@@ -233,7 +234,7 @@ Since they are concerned with shifting the same token, they all must
 After the shift, the stack is:
 
 ```
-    #3732
+    #3968
     DeclarationSpecifier
     --------------------------------------------------
     #0
@@ -243,12 +244,12 @@ After the shift, the stack is:
 The next available token in the input, and also the current look-head for the
 machine, is still the identifier `main`.
 
-The choice of items in the item-set-#3732 are these items, one of which is a
+The choice of items in the item-set-#3968 are these items, one of which is a
 shift-item and the other is a reduce-item.
 
 ```
 [DeclarationSpecifiers -> DeclarationSpecifier .] las: ... Identifier ...
-[TypedefName -> . Identifier] jump=3985
+[TypedefName -> . Identifier] jump=4221
 ```
 
 The machine encounters a shift/reduce conflict. It forks the stack, and copies
@@ -261,7 +262,7 @@ that of the reduce-item is described in the steps #4 and beyond, below.
 
 ### Step #3.1:
 
-The machine is in the state #3732, with no current token. The machine fetches
+The machine is in the state #3968, with no current token. The machine fetches
 the next available token in the input-stream, the identifier `main`,
 as the current token.
 
@@ -273,7 +274,6 @@ After the fetch, the parse forest is:
     v
     TypeSpecifierQualifier
     |
-    |
     v
     TypeSpecifier
     |
@@ -284,10 +284,10 @@ After the fetch, the parse forest is:
 After the shift, the stack is
 
 ```
-    #3985
+    #4221
     Identifier(main)
     --------------------------------------------------
-    #3732
+    #3968
     DeclarationSpecifier
     --------------------------------------------------
     #0
@@ -297,7 +297,7 @@ After the shift, the stack is
 The next available token in the input, and also the current look-head for the
 machine, is the punctuator `(`.
 
-The choice of items in the item-set-#3985 is the reduce-item
+The choice of items in the item-set-#4221 is the reduce-item
 
 `[TypedefName -> Identifier .] las: ... ( ...`,
 
@@ -307,7 +307,7 @@ After the reduction, the current token is `TypedefName`, with the
 stack as shown below:
 
 ```
-    #3732
+    #3968
     DeclarationSpecifier
     --------------------------------------------------
     #0
@@ -322,7 +322,6 @@ The parse forest is:
     v
     TypeSpecifierQualifier
     |
-    |
     v
     TypeSpecifier           TypedefName
     |                       |
@@ -334,20 +333,20 @@ The parse forest is:
 
 ### Step #3.2:
 
-The machine is in the state #3732, with `TypedefName` as the
+The machine is in the state #3968, with `TypedefName` as the
 current token.
 
-The choice of items in the item-set-#3732 is the shift-item
+The choice of items in the item-set-#3968 is the shift-item
 
-`[TypeSpecifier -> . TypedefName] jump=3780`.
+`[TypeSpecifier -> . TypedefName] jump=4016`.
 
 After the shift, the stack is:
 
 ```
-    #3780
+    #4016
     TypedefName
     --------------------------------------------------
-    #3732
+    #3968
     DeclarationSpecifier
     --------------------------------------------------
     #0
@@ -357,7 +356,7 @@ After the shift, the stack is:
 The next available token in the input, and also the current look-head for the
 machine, is still the punctuator `(`.
 
-The choice of items in the item-set-#3780 is the reduce-item
+The choice of items in the item-set-#4016 is the reduce-item
 
 `[TypeSpecifier -> TypedefName .] las: ... ( ...`,
 
@@ -367,7 +366,7 @@ After the reduction, the current token is `TypeSpecifier`, with the
 stack as shown below:
 
 ```
-    #3732
+    #3968
     DeclarationSpecifier
     --------------------------------------------------
     #0
@@ -393,20 +392,20 @@ The parse forest is:
 
 ### Step #3.3:
 
-The machine is in the state #3732, with `TypeSpecifier` as the
+The machine is in the state #3968, with `TypeSpecifier` as the
 current token.
 
-The choice of items in the item-set-#3732 is the shift-item
+The choice of items in the item-set-#3968 is the shift-item
 
-`[TypeSpecifierQualifier -> . TypeSpecifier] jump=3754`.
+`[TypeSpecifierQualifier -> . TypeSpecifier] jump=3990`.
 
 After the shift, the stack is:
 
 ```
-    #3754
+    #3990
     TypeSpecifier
     --------------------------------------------------
-    #3732
+    #3978
     DeclarationSpecifier
     --------------------------------------------------
     #0
@@ -416,7 +415,7 @@ After the shift, the stack is:
 The next available token in the input, and also the current look-head for the
 machine, is still the punctuator `(`.
 
-The choice of items in the item-set-#3754 is the reduce-item
+The choice of items in the item-set-#3990 is the reduce-item
 
 `[TypeSpecifierQualifier -> TypeSpecifier .] las: ... ( ...`,
 
@@ -426,7 +425,7 @@ After the reduction, the current token is `TypeSpecifierQualifier`, with the
 stack as shown below:
 
 ```
-    #3732
+    #3968
     DeclarationSpecifier
     --------------------------------------------------
     #0
@@ -452,20 +451,20 @@ The parse forest is:
 
 ### Step #3.4:
 
-The machine is in the state #3732, with `TypeSpecifierQualifier` as the
+The machine is in the state #3968, with `TypeSpecifierQualifier` as the
 current token.
 
-The choice of items in the item-set-#3732 is the shift-item
+The choice of items in the item-set-#3968 is the shift-item
 
-`[DeclarationSpecifier -> . TypeSpecifierQualifier] jump=3745`.
+`[DeclarationSpecifier -> . TypeSpecifierQualifier] jump=3981`.
 
 After the shift, the stack is:
 
 ```
-    #3745
+    #3981
     TypeSpecifierQualifier
     --------------------------------------------------
-    #3732
+    #3968
     DeclarationSpecifier
     --------------------------------------------------
     #0
@@ -475,7 +474,7 @@ After the shift, the stack is:
 The next token in the input, and also the current look-head for the machine, is
 still the punctuator `(`.
 
-The choice of items in the item-set-#3745 is the reduce-item
+The choice of items in the item-set-#3981 is the reduce-item
 
 `[DeclarationSpecifier -> TypeSpecifierQualifier .] las: ... ( ...`,
 
@@ -485,7 +484,7 @@ After the reduction, the current token is `DeclarationSpecifier`, with the
 stack as shown below:
 
 ```
-    #3732
+    #3968
     DeclarationSpecifier
     --------------------------------------------------
     #0
@@ -514,24 +513,24 @@ The parse forest is:
 
 ### Step #3.5:
 
-The machine is in the state #3732, with `DeclarationSpecifier` as the
+The machine is in the state #3968, with `DeclarationSpecifier` as the
 current token.
 
 The choice of items in the item-set-#3732 are the shift-items
 
 ```
-[DeclarationSpecifiers -> . DeclarationSpecifier] jump=3732
-[DeclarationSpecifiers -> . DeclarationSpecifier AttributeSpecifierSequence] jump=3732
-[DeclarationSpecifiers -> . DeclarationSpecifier DeclarationSpecifiers] jump=3732
+[DeclarationSpecifiers -> . DeclarationSpecifier] jump=3968
+[DeclarationSpecifiers -> . DeclarationSpecifier AttributeSpecifierSequence] jump=3968
+[DeclarationSpecifiers -> . DeclarationSpecifier DeclarationSpecifiers] jump=3968
 ```
 
 After the shift, the stack is:
 
 ```
-    #3732
+    #3968
     DeclarationSpecifier
     --------------------------------------------------
-    #3732
+    #3968
     DeclarationSpecifier
     --------------------------------------------------
     #0
@@ -541,7 +540,7 @@ After the shift, the stack is:
 The next token in the input, and also the current look-head for the machine, is
 still the punctuator `(`.
 
-The choice of items in the item-set-#3732 is the reduce-item
+The choice of items in the item-set-#3968 is the reduce-item
 
 `[DeclarationSpecifiers -> DeclarationSpecifier .] las: ... ( ...`.
 
@@ -551,7 +550,7 @@ After the reduction, the current token is `DeclarationSpecifiers`, with the
 stack as shown below:
 
 ```
-    #3732
+    #3968
     DeclarationSpecifier
     --------------------------------------------------
     #0
@@ -583,22 +582,22 @@ The parse forest is:
 
 ### Step #3.6:
 
-The machine is in the state #3732, with `DeclarationSpecifiers` as the
+The machine is in the state #3968, with `DeclarationSpecifiers` as the
 current token.
 
-The choice of items in the item-set-#3732 is the shift-item
+The choice of items in the item-set-#3968 is the shift-item
 
-`[DeclarationSpecifiers -> DeclarationSpecifier . DeclarationSpecifiers] jump=3742`
+`[DeclarationSpecifiers -> DeclarationSpecifier . DeclarationSpecifiers] jump=3978`
 
 (Notice the right-associativity of `DeclarationSpecifiers`.)
 
 After the shift, the stack is:
 
 ```
-    #3742
+    #3978
     DeclarationSpecifiers
     --------------------------------------------------
-    #3732
+    #3968
     DeclarationSpecifier
     --------------------------------------------------
     #0
@@ -608,7 +607,7 @@ After the shift, the stack is:
 The next token in the input, and also the current look-head for the machine, is
 still the punctuator `(`.
 
-The choice of items in the item-set-#3742 is the reduce-item
+The choice of items in the item-set-#3978 is the reduce-item
 
 `[DeclarationSpecifiers -> DeclarationSpecifier DeclarationSpecifiers .] las: ... ( ...`,
 
@@ -715,12 +714,12 @@ After the fetch, the parse forest is:
 
 The choice of items in the item-set-#5 is the shift-item
 
-`[DirectDeclarator -> . ( Declarator )] jump=4487`.
+`[DirectDeclarator -> . ( Declarator )] jump=4747`.
 
 After the shift, the stack is:
 
 ```
-    #4487
+    #4747
     (
     --------------------------------------------------
     #5
@@ -733,7 +732,7 @@ After the shift, the stack is:
 The next token in the input, and also the current look-head for the machine, is
 now the punctuator `)`.
 
-There is no suitable reduce-item in the item-set-#4487.
+There is no suitable reduce-item in the item-set-#4747.
 Nor is there a shift-item that can shift the token `)`. The machine cannot move
 any more.
 
@@ -833,14 +832,14 @@ After the fetch, the parse forest is:
 The choice of items in the item-set-#5 is the set of these shift-items
 
 ```
-[DirectDeclarator -> . Identifier] jump=4476
-[DirectDeclarator -> . Identifier AttributeSpecifierSequence]c$ jump=4476
+[DirectDeclarator -> . Identifier] jump=4736
+[DirectDeclarator -> . Identifier AttributeSpecifierSequence]c$ jump=4736
 ```
 
 After the shift, the stack is:
 
 ```
-    #4476
+    #4736
     Identifier(main)
     --------------------------------------------------
     #5
@@ -853,7 +852,7 @@ After the shift, the stack is:
 The next token in the input, and also the current look-head for the machine, is
 now the punctuator `(`.
 
-The choice of items in the item-set-#4476 is the reduce-item
+The choice of items in the item-set-#4736 is the reduce-item
 
 `[DirectDeclarator -> Identifier .] las: ... ( ...`,
 
@@ -898,24 +897,24 @@ current token.
 The choice of items in the item-set-#5 is the set of these shift-items
 
 ```
-[Declarator -> . DirectDeclarator] jump=4448
-[ArrayDeclarator -> . DirectDeclarator [ ]] jump=4448
-[ArrayDeclarator -> . DirectDeclarator [ TypeQualifierList ]] jump=4448
-[ArrayDeclarator -> . DirectDeclarator [ AssignmentExpression ]] jump=4448
-[ArrayDeclarator -> . DirectDeclarator [ TypeQualifierList AssignmentExpression ]] jump=4448
-[ArrayDeclarator -> . DirectDeclarator [ static AssignmentExpression ]] jump=4448
-[ArrayDeclarator -> . DirectDeclarator [ static TypeQualifierList AssignmentExpression ]] jump=4448
-[ArrayDeclarator -> . DirectDeclarator [ TypeQualifierList static AssignmentExpression ]] jump=4448
-[ArrayDeclarator -> . DirectDeclarator [ * ]] jump=4448
-[ArrayDeclarator -> . DirectDeclarator [ TypeQualifierList * ]] jump=4448
-[FunctionDeclarator -> . DirectDeclarator ( )] jump=4448
-[FunctionDeclarator -> . DirectDeclarator ( ParameterTypeList )] jump=4448
+[Declarator -> . DirectDeclarator] jump=4708
+[ArrayDeclarator -> . DirectDeclarator [ ]] jump=4708
+[ArrayDeclarator -> . DirectDeclarator [ TypeQualifierList ]] jump=4708
+[ArrayDeclarator -> . DirectDeclarator [ AssignmentExpression ]] jump=4708
+[ArrayDeclarator -> . DirectDeclarator [ TypeQualifierList AssignmentExpression ]] jump=4708
+[ArrayDeclarator -> . DirectDeclarator [ static AssignmentExpression ]] jump=4708
+[ArrayDeclarator -> . DirectDeclarator [ static TypeQualifierList AssignmentExpression ]] jump=4708
+[ArrayDeclarator -> . DirectDeclarator [ TypeQualifierList static AssignmentExpression ]] jump=4708
+[ArrayDeclarator -> . DirectDeclarator [ * ]] jump=4708
+[ArrayDeclarator -> . DirectDeclarator [ TypeQualifierList * ]] jump=4708
+[FunctionDeclarator -> . DirectDeclarator ( )] jump=4708
+[FunctionDeclarator -> . DirectDeclarator ( ParameterTypeList )] jump=4708
 ```
 
 After the shift, the stack is:
 
 ```
-    #4448
+    #4708
     DirectDeclarator
     --------------------------------------------------
     #5
@@ -928,14 +927,14 @@ After the shift, the stack is:
 The next token in the input, and also the current look-head for the machine, is
 still the punctuator `(`.
 
-There are no suitable reduce-items in the item-set-#4448.
+There are no suitable reduce-items in the item-set-#4708.
 Hence, the machine attempts a shift.
 
 ---
 
 ### Step #8:
 
-The machine is in the state #4448, with no current token. The machine fetches
+The machine is in the state #4708, with no current token. The machine fetches
 the next available token in the input-stream, `(`, as the current token.
 
 After the fetch, the parse forest is:
@@ -956,20 +955,20 @@ After the fetch, the parse forest is:
     int                     main              (
 ```
 
-The choice of items in the item-set-#4448 is the set of these shift-items
+The choice of items in the item-set-#4708 is the set of these shift-items
 
 ```
-[FunctionDeclarator -> DirectDeclarator . ( )] jump=4470
-[FunctionDeclarator -> DirectDeclarator . ( ParameterTypeList )] jump=4470
+[FunctionDeclarator -> DirectDeclarator . ( )] jump=4730
+[FunctionDeclarator -> DirectDeclarator . ( ParameterTypeList )] jump=4730
 ```
 
 After the shift, the stack is:
 
 ```
-    #4470
+    #4730
     (
     --------------------------------------------------
-    #4448
+    #4708
     DirectDeclarator
     --------------------------------------------------
     #5
@@ -982,14 +981,14 @@ After the shift, the stack is:
 The next token in the input, and also the current look-head for the machine, is
 now the punctuator `)`.
 
-There is no suitable reduce-item in the item-set-#4470.
+There is no suitable reduce-item in the item-set-#4730.
 Hence, the machine attempts a shift.
 
 ---
 
 ### Step #9:
 
-The machine is in the state #4470, with no current token. The machine fetches
+The machine is in the state #4730, with no current token. The machine fetches
 the next available token in the input-stream, the punctuator `)`,
 
 After the fetch, the parse forest is:
@@ -1010,20 +1009,20 @@ After the fetch, the parse forest is:
     int                     main              (  )
 ```
 
-The choice of item in the item-set-#4470 is the shift-item
+The choice of item in the item-set-#4730 is the shift-item
 
-`[FunctionDeclarator -> DirectDeclarator ( . )] jump=4471`.
+`[FunctionDeclarator -> DirectDeclarator ( . )] jump=4731`.
 
 After the shift, the stack is:
 
 ```
-    #4471
+    #4731
     )
     --------------------------------------------------
-    #4470
+    #4730
     (
     --------------------------------------------------
-    #4448
+    #4708
     DirectDeclarator
     --------------------------------------------------
     #5
@@ -1036,7 +1035,7 @@ After the shift, the stack is:
 The next token in the input, and also the current look-head for the machine, is
 now the punctuator `{`.
 
-The choice of items in the item-set-#4471 is the reduce-item
+The choice of items in the item-set-#4731 is the reduce-item
 
 `[FunctionDeclarator -> DirectDeclarator ( ) .] las: ... { ...`,
 
@@ -1082,13 +1081,13 @@ current token.
 The choice of items in the item-set-#5 is the set of shift-items
 
 ```
-[DirectDeclarator -> . FunctionDeclarator] jump=4492
-[DirectDeclarator -> . FunctionDeclarator AttributeSpecifierSequence] jump=4492
+[DirectDeclarator -> . FunctionDeclarator] jump=4752
+[DirectDeclarator -> . FunctionDeclarator AttributeSpecifierSequence] jump=4752
 ```
 
 After the shift, the stack is:
 ```
-    #4492
+    #4752
     FunctionDeclarator
     --------------------------------------------------
     #5
@@ -1101,7 +1100,7 @@ After the shift, the stack is:
 The next token in the input, and also the current look-head for the machine, is
 still the punctuator `{`.
 
-The choice of items in the item-set-#4492 is the reduce-item
+The choice of items in the item-set-#4752 is the reduce-item
 
 `[DirectDeclarator -> FunctionDeclarator .] las: ... { ...`,
 
@@ -1147,24 +1146,24 @@ current token.
 The choice of items in the item-set-#5 is the set of shift-items
 
 ```
-[Declarator -> . DirectDeclarator] jump=4448
-[ArrayDeclarator -> . DirectDeclarator [ ]] jump=4448
-[ArrayDeclarator -> . DirectDeclarator [ TypeQualifierList ]] jump=4448
-[ArrayDeclarator -> . DirectDeclarator [ AssignmentExpression ]] jump=4448
-[ArrayDeclarator -> . DirectDeclarator [ TypeQualifierList AssignmentExpression ]] jump=4448
-[ArrayDeclarator -> . DirectDeclarator [ static AssignmentExpression ]] jump=4448
-[ArrayDeclarator -> . DirectDeclarator [ static TypeQualifierList AssignmentExpression ]] jump=4448
-[ArrayDeclarator -> . DirectDeclarator [ TypeQualifierList static AssignmentExpression ]] jump=4448
-[ArrayDeclarator -> . DirectDeclarator [ * ]] jump=4448
-[ArrayDeclarator -> . DirectDeclarator [ TypeQualifierList * ]] jump=4448
-[FunctionDeclarator -> . DirectDeclarator ( )] jump=4448
-[FunctionDeclarator -> . DirectDeclarator ( ParameterTypeList )] jump=4448
+[Declarator -> . DirectDeclarator] jump=4708
+[ArrayDeclarator -> . DirectDeclarator [ ]] jump=4708
+[ArrayDeclarator -> . DirectDeclarator [ TypeQualifierList ]] jump=4708
+[ArrayDeclarator -> . DirectDeclarator [ AssignmentExpression ]] jump=4708
+[ArrayDeclarator -> . DirectDeclarator [ TypeQualifierList AssignmentExpression ]] jump=4708
+[ArrayDeclarator -> . DirectDeclarator [ static AssignmentExpression ]] jump=4708
+[ArrayDeclarator -> . DirectDeclarator [ static TypeQualifierList AssignmentExpression ]] jump=4708
+[ArrayDeclarator -> . DirectDeclarator [ TypeQualifierList static AssignmentExpression ]] jump=4708
+[ArrayDeclarator -> . DirectDeclarator [ * ]] jump=4708
+[ArrayDeclarator -> . DirectDeclarator [ TypeQualifierList * ]] jump=4708
+[FunctionDeclarator -> . DirectDeclarator ( )] jump=4708
+[FunctionDeclarator -> . DirectDeclarator ( ParameterTypeList )] jump=4708
 ```
 
 After the shift, the stack is:
 
 ```
-    #4448
+    #4708
     DirectDeclarator
     --------------------------------------------------
     #5
@@ -1177,7 +1176,7 @@ After the shift, the stack is:
 The next token in the input, and also the current look-head for the machine, is
 still the punctuator `{`.
 
-The choice of items in the item-set-#4448 is the reduce-item
+The choice of items in the item-set-#4708 is the reduce-item
 
 `[Declarator -> DirectDeclarator .] las: ... { ...`,
 
@@ -1277,14 +1276,14 @@ After the fetch, the parse forest is:
 The choice of items in the item-set-#6 is the set of shift-items
 
 ```
-[CompoundStatement -> . { }] jump=3237
-[CompoundStatement -> . { BlockItemList }] jump=3237
+[CompoundStatement -> . { }] jump=3459
+[CompoundStatement -> . { BlockItemList }] jump=3459
 ```
 
 After the shift, the stack is:
 
 ```
-    #3237
+    #3459
     {
     --------------------------------------------------
     #6
@@ -1300,14 +1299,14 @@ After the shift, the stack is:
 The next token in the input, and also the current look-head for the machine, is
 now the key-word `return`.
 
-There is no suitable reduce-item in the item-set-#3237.
+There is no suitable reduce-item in the item-set-#3459.
 Hence, the machine attempts a shift.
 
 ---
 
 ### Step #14:
 
-The machine is in the state #3237, with no current token. The machine fetches
+The machine is in the state #3459, with no current token. The machine fetches
 the next available token in the input-stream, the key-word `return`, as the
 current token.
 
@@ -1331,20 +1330,20 @@ After the fetch, the parse forest is:
     int                     main              (  )  {  return
 ```
 
-The choice of items in the item-set-#3237 is the set of shift-items
+The choice of items in the item-set-#3459 is the set of shift-items
 
 ```
-[JumpStatement -> . return ;] jump=3704
-[JumpStatement -> . return Expression ;] jump=3704
+[JumpStatement -> . return ;] jump=3940
+[JumpStatement -> . return Expression ;] jump=3940
 ```
 
 After the shift, the stack is:
 
 ```
-    #3704
+    #3940
     return
     --------------------------------------------------
-    #3237
+    #3459
     {
     --------------------------------------------------
     #6
@@ -1358,18 +1357,18 @@ After the shift, the stack is:
 ```
 
 The next token in the input, and also the current look-head for the machine, is
-now `0`, known to the grammar as a `Constant`.
+now `0`, known to the grammar as a `IntegerConstant`.
 
-There is no suitable reduce-item in the item-set-#3704.
+There is no suitable reduce-item in the item-set-#3940.
 Hence, the machine attempts a shift.
 
 ---
 
 ### Step #15:
 
-The machine is in the state #3704, with no current token. The machine fetches
-the next available token in the input-stream, `0` (or, `Constant`), as the
-current token.
+The machine is in the state #3940, with no current token. The machine fetches
+the next available token in the input-stream, `0` (or, `IntegerConstant`), as
+the current token.
 
 After the fetch, the parse forest is:
 
@@ -1391,20 +1390,20 @@ After the fetch, the parse forest is:
     int                     main              (  )  {  return  0
 ```
 
-The choice of items in the item-set-#3704 is the shift-item
+The choice of items in the item-set-#3940 is the shift-item
 
-`[PrimaryExpression -> . Constant] jump=3215`.
+`[PrimaryExpression -> . IntegerConstant] jump=3423`.
 
 After the shift, the stack is:
 
 ```
-    #3215
-    Constant(0)
+    #3423
+    IntegerConstant(0)
     --------------------------------------------------
-    #3704
+    #3940
     return
     --------------------------------------------------
-    #3237
+    #3459
     {
     --------------------------------------------------
     #6
@@ -1420,9 +1419,9 @@ After the shift, the stack is:
 The next token in the input, and also the current look-head for the machine, is
 now the punctuator `;`.
 
-The choice of items in the item-set-#3215 is the reduce-item
+The choice of items in the item-set-#3423 is the reduce-item
 
-`[PrimaryExpression -> Constant .] las: ... ; ...`,
+`[PrimaryExpression -> IntegerConstant .] las: ... ; ...`,
 
 with its look-ahead constraint satisfied.
 
@@ -1430,10 +1429,10 @@ After the reduction, the current token is `PrimaryExpression`, with the
 stack as shown below:
 
 ```
-    #3704
+    #3940
     return
     --------------------------------------------------
-    #3237
+    #3459
     {
     --------------------------------------------------
     #6
@@ -1470,23 +1469,23 @@ The parse forest is:
 
 ### Step #16:
 
-The machine is in the state #3704, with `PrimaryExpression` as the
+The machine is in the state #3940, with `PrimaryExpression` as the
 current token.
 
 The choice of items in the item-set-#3704 is the shift-item
 
-`[PostfixExpression -> . PrimaryExpression] jump=3212`.
+`[PostfixExpression -> . PrimaryExpression] jump=3420`.
 
 After the shift, the stack is:
 
 ```
-    #3212
+    #3420
     PrimaryExpression
     --------------------------------------------------
-    #3704
+    #3940
     return
     --------------------------------------------------
-    #3237
+    #3459
     {
     --------------------------------------------------
     #6
@@ -1502,7 +1501,7 @@ After the shift, the stack is:
 The next available token in the input, and also the current look-head for the
 machine, is still the punctuator `;`.
 
-The choice of items in the item-set-#3212 is the reduce-item
+The choice of items in the item-set-#3420 is the reduce-item
 
 `[PostfixExpression -> PrimaryExpression .] las: ... ; ...`,
 
@@ -1512,10 +1511,10 @@ After the reduction, the current token is `PostfixExpression`, with the
 stack as shown below:
 
 ```
-    #3704
+    #3940
     return
     --------------------------------------------------
-    #3237
+    #3459
     {
     --------------------------------------------------
     #6
@@ -1560,10 +1559,10 @@ input, and also the current look-head for the machine, is still the punctuator
 The stack is:
 
 ```
-    #3704
+    #3940
     return
     --------------------------------------------------
-    #3237
+    #3459
     {
     --------------------------------------------------
     #6
@@ -1652,26 +1651,26 @@ The parse forest is:
 
 ### Step #18:
 
-The machine is in the state #3704, with `Expression` as the
+The machine is in the state #3940, with `Expression` as the
 current token.
 
-The choice of items in the item-set-#3704 is the set of shift-items
+The choice of items in the item-set-#3940 is the set of shift-items
 
 ```
-[JumpStatement -> return . Expression ;] jump=3706
-[Expression -> . Expression , AssignmentExpression] jump=3706
+[JumpStatement -> return . Expression ;] jump=3942
+[Expression -> . Expression , AssignmentExpression] jump=3942
 ```
 
 After the shift:
 
 ```
-    #3706
+    #3942
     Expression
     --------------------------------------------------
-    #3704
+    #3940
     return
     --------------------------------------------------
-    #3237
+    #3459
     {
     --------------------------------------------------
     #6
@@ -1687,14 +1686,14 @@ After the shift:
 The next available token in the input, and also the current look-head for the
 machine, is still the punctuator `;`.
 
-There is no suitable reduce-item in the item-set-#3706.
+There is no suitable reduce-item in the item-set-#3942.
 Hence, the machine attempts a shift.
 
 ---
 
 ### Step #19:
 
-The machine is in the state #3706, with no current token. The machine fetches
+The machine is in the state #3942, with no current token. The machine fetches
 the next available token in the input-stream, the punctuator `;`, as the
 current token.
 
@@ -1730,23 +1729,23 @@ After the fetch, the parse forest is:
     int                     main              (  )  {  return  0  ;
 ```
 
-The choice of items in the item-set-#3706 is the shift-item
+The choice of items in the item-set-#3942 is the shift-item
 
-`[JumpStatement -> return Expression . ;] jump=3707`.
+`[JumpStatement -> return Expression . ;] jump=3943`.
 
 After the shift, the stack is:
 
 ```
-    #3707
+    #3943
     ;
     --------------------------------------------------
-    #3706
+    #3942
     Expression
     --------------------------------------------------
-    #3704
+    #3940
     return
     --------------------------------------------------
-    #3237
+    #3459
     {
     --------------------------------------------------
     #6
@@ -1762,7 +1761,7 @@ After the shift, the stack is:
 The next available token in the input, and also the current look-head for the
 machine, is now the punctuator `}`.
 
-The choice of items in the item-set-#3707 is the reduce-item
+The choice of items in the item-set-#3943 is the reduce-item
 
 `[JumpStatement -> return Expression ; .] las: ... } ...`,
 
@@ -1772,7 +1771,7 @@ After the reduction, the current token is `JumpStatement`, with the
 stack as shown below:
 
 ```
-    #3237
+    #3459
     {
     --------------------------------------------------
     #6
@@ -1911,12 +1910,12 @@ current token.
 
 The choice of items in the item-set-#6 is the shift-item
 
-`[FunctionBody -> . CompoundStatement] jump=3236`.
+`[FunctionBody -> . CompoundStatement] jump=3458`.
 
 After the shift, the stack is:
 
 ```
-    #3236
+    #3458
     CompoundStatement
     --------------------------------------------------
     #6
@@ -1929,7 +1928,7 @@ After the shift, the stack is:
     --------------------------------------------------
 ```
 
-The choice of items in the item-set-#3236 is the reduce-item
+The choice of items in the item-set-#3458 is the reduce-item
 
 `[FunctionBody -> CompoundStatement .] las: ... eof ...`,
 
@@ -2141,3 +2140,9 @@ The (complete) parse tree is:
 
 Regenerated after fixing missing tokens in the
 [grammar.txt](https://github.com/asurati/x24)
+
+---
+
+### **Update #2:** <a name="update2"></a>
+
+Regenerated after fixing the first-set for the non-terminals.
