@@ -12,6 +12,8 @@ tags:
 
 *[Update #2](#update2) on: 13th September, 2023.*
 
+---
+
 This post demonstrates the [GLR](https://en.wikipedia.org/wiki/GLR_parser)
 parsing of a tiny C program, with the reader assuming the role of an
 [LR(1)](https://en.wikipedia.org/wiki/Canonical_LR_parser)
