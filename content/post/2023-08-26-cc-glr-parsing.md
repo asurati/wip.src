@@ -9,6 +9,7 @@ tags:
 ---
 
 *[Update #1](#update1) on: 28th August, 2023.*
+
 *[Update #2](#update2) on: 13th September, 2023.*
 
 This post demonstrates the [GLR](https://en.wikipedia.org/wiki/GLR_parser)
