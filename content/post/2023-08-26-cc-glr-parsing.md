@@ -992,7 +992,7 @@ Hence, the machine attempts a shift.
 ### Step #9:
 
 The machine is in the state #4730, with no current token. The machine fetches
-the next available token in the input-stream, the punctuator `)`,
+the next available token in the input-stream, the punctuator `)`.
 
 After the fetch, the parse forest is:
 
@@ -1081,7 +1081,7 @@ The parse forest is:
 The machine is in the state #5, with `FunctionDeclarator` as the
 current token.
 
-The choice of items in the item-set-#5 is the set of shift-items
+The choice of items in the item-set-#5 is the set of these shift-items
 
 ```
 [DirectDeclarator -> . FunctionDeclarator] jump=4752
@@ -1146,7 +1146,7 @@ The parse forest is:
 The machine is in the state #5, with `DirectDeclarator` as the
 current token.
 
-The choice of items in the item-set-#5 is the set of shift-items
+The choice of items in the item-set-#5 is the set of these shift-items
 
 ```
 [Declarator -> . DirectDeclarator] jump=4708
@@ -1223,7 +1223,7 @@ The parse forest is:
 The machine is in the state #5, with `Declarator` as the
 current token.
 
-The choice of items in the item-set-#5 is the set of shift-items
+The choice of items in the item-set-#5 is the set of these shift-items
 
 ```
 [FunctionDefinition -> DeclarationSpecifiers . Declarator FunctionBody] jump=6
@@ -1276,7 +1276,7 @@ After the fetch, the parse forest is:
     int                     main              (  )  {
 ```
 
-The choice of items in the item-set-#6 is the set of shift-items
+The choice of items in the item-set-#6 is the set of these shift-items
 
 ```
 [CompoundStatement -> . { }] jump=3459
@@ -1333,7 +1333,7 @@ After the fetch, the parse forest is:
     int                     main              (  )  {  return
 ```
 
-The choice of items in the item-set-#3459 is the set of shift-items
+The choice of items in the item-set-#3459 is the set of these shift-items
 
 ```
 [JumpStatement -> . return ;] jump=3940
@@ -1657,7 +1657,7 @@ The parse forest is:
 The machine is in the state #3940, with `Expression` as the
 current token.
 
-The choice of items in the item-set-#3940 is the set of shift-items
+The choice of items in the item-set-#3940 is the set of these shift-items
 
 ```
 [JumpStatement -> return . Expression ;] jump=3942
