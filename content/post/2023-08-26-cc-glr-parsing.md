@@ -1360,7 +1360,7 @@ After the shift, the stack is:
 ```
 
 The next token in the input, and also the current look-head for the machine, is
-now `0`, known to the grammar as a `IntegerConstant`.
+now `0`, known to the grammar as an `IntegerConstant`.
 
 There is no suitable reduce-item in the item-set-#3940.
 Hence, the machine attempts a shift.
@@ -1475,7 +1475,7 @@ The parse forest is:
 The machine is in the state #3940, with `PrimaryExpression` as the
 current token.
 
-The choice of items in the item-set-#3704 is the shift-item
+The choice of items in the item-set-#3940 is the shift-item
 
 `[PostfixExpression -> . PrimaryExpression] jump=3420`.
 
