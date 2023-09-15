@@ -9,7 +9,7 @@ tags:
 ---
 
 This post demonstrates the ambiguity that arises when parsing the C23
-`TypeSpecifier` [`alignas`](https://en.cppreference.com/w/c/language/_Alignas),
+`AlignmentSpecifier` [`alignas`](https://en.cppreference.com/w/c/language/_Alignas),
 and the context-sensitive nature of the parsing required to correctly
 parse the specifier.
 
@@ -17,7 +17,7 @@ parse the specifier.
 
 ### The ambiguity:
 
-The `TypeSpecifier` is represented by the non-terminal `AlignmentSpecifier`
+The specifier is represented by the non-terminal `AlignmentSpecifier`
 in the C2x [grammar](https://github.com/asurati/x24/blob/main/grammar.txt):
 
 ```
