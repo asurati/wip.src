@@ -784,9 +784,9 @@ current token.
 The choice of items in the item-set-#0 is the set of these shift-items
 
 ```
-[FunctionDefinition -> . DeclarationSpecifiers Declarator FunctionBody] jump=5`
-[Declaration -> . DeclarationSpecifiers ;] jump=5`
-[Declaration -> . DeclarationSpecifiers InitDeclaratorList ;] jump=5`
+[FunctionDefinition -> . DeclarationSpecifiers Declarator FunctionBody] jump=5
+[Declaration -> . DeclarationSpecifiers ;] jump=5
+[Declaration -> . DeclarationSpecifiers InitDeclaratorList ;] jump=5
 ```
 
 After the shift, the stack is:
