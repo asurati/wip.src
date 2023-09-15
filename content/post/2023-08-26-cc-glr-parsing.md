@@ -1664,7 +1664,7 @@ The choice of items in the item-set-#3940 is the set of these shift-items
 [Expression -> . Expression , AssignmentExpression] jump=3942
 ```
 
-After the shift:
+After the shift, the stack is:
 
 ```
     #3942
