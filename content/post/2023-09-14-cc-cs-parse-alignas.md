@@ -52,6 +52,16 @@ Or, it can be an identifier that represents a `ConstantExpression`
     constexpr int a = 32;
 ```
 
+Or, it can be an identifier that represents a `ConstantExpression`
+(`ConstantExpression` derives `PrimaryExpression` derives
+ `EnumerationConstant` derives `Identifier`):
+
+```c
+    enum {
+        a = 32;
+    };
+```
+
 ---
 
 ### The ambiguity in an LR(1) parser:
