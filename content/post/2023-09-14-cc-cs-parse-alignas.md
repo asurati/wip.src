@@ -58,7 +58,7 @@ Or, it can be an identifier that represents a `ConstantExpression`
 
 ```c
     enum {
-        a = 32;
+        a = 32,
     };
 ```
 
