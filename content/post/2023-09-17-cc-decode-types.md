@@ -653,10 +653,10 @@ for an `AbstractDeclarator`.
    situations, depending on whether the pair of parentheses is empty or
    not:
     1. If the pair of parentheses is empty, then the location of the
-       `Identfier` is to the immediate left of the corresponding opening
+       `Identifier` is to the immediate left of the corresponding opening
        punctuator `(`.
     2. If the pair of parentheses is not empty, then the location of the
-       `Identfier` is to the immediate left of the corresponding closing
+       `Identifier` is to the immediate left of the corresponding closing
        punctuator `)`.
 
 ---
