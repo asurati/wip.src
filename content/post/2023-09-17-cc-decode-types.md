@@ -272,7 +272,7 @@ this example) collected in the `DeclarationSpecifiers`.
 Note that
 `DeclarationSpecifiers` also collect `TypeQualifiers` (this example has none),
 such as `const`, `restrict`, `volatile`, and `_Atomic`, that further qualify
-the `TypeQualifier` (`char` in this example).
+the `TypeSpecifier` (`char` in this example).
 
 The output-list is:
 
