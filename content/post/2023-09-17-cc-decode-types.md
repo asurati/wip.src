@@ -741,7 +741,7 @@ the `Declaration` `int (*((((x)[3]))))` is equivalent to `int *x[3]`.
 
 But, removing `x` from the `Declaration` `int (*((((x)[3]))))` results in a
 `TypeName` `int (*(((()[3]))))` that is semantically invalid, and therefore,
-not equivalent to `int *x[3]`, as shown below.
+not equivalent to `int *[3]`, as shown below.
 
 The initial state for the example is:
 
