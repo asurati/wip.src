@@ -799,13 +799,13 @@ as shown below.
 
 A punctuator `)` is found next in the input.
 Before the punctuator is removed from the input-stream, one can see that
-the output-list is empty, the corresponding opening punctuator `(` is on the
-top of the operand-stack (i.e., this pair of parentheses is empty.)
+the output-list is empty, and the corresponding opening punctuator `(` is on
+the top of the operand-stack (i.e., this pair of parentheses is empty.)
 
 Hence, the rule `(2.1)` of the [Rules for TypeNames](#typename_rules) applies.
 
 The position of the `Identifier` is shown here in `int (*(((x()[3]))))` through
-the use of the name `x`. As can be seen, this `Declaration` is not same as
+the use of the name `x`. As is evident, this `Declaration` is not same as
 `int (*((((x)[3]))))`.
 
 The rule says that the position of the `Identifier` is to the immediate left
