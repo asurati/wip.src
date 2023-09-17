@@ -559,7 +559,7 @@ which is the same as that for `int *x[3]`.
 
 ### Example #3:
 
-This example demonstrate how the precedence-ordering parentheses, that are
+This example demonstrates how the precedence-ordering parentheses, that are
 not extraneous, are handled by the method.
 
 The initial state for the example is:
