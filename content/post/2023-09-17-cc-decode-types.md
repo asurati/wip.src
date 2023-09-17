@@ -355,10 +355,10 @@ extraneous pairs, and arriving at a minimal representation of a type.
 The `Declaration` `int (*((((x)[3]))));` therefore is:
 
 ```
-   x is ...
-   an array[3] of ...
-   a pointer to ...
-   an int.
+    x is ...
+    an array[3] of ...
+    a pointer to ...
+    an int.
 ```
 
 ---
@@ -367,16 +367,16 @@ One can also confirm that the description is correct, by consulting the AST
 produced by `clang`:
 
 ```bash
-$ # On bash shell
+    $ # On bash shell
 
-$ cat 1.c
-$ int (*((((x)[3]))));
+    $ cat 1.c
+    $ int (*((((x)[3]))));
 
-$ clang -E -Xclang -ast-dump -fno-color-diagnostics 1.c
-TranslationUnitDecl 0x56313f5e0938 <<invalid sloc>> <invalid sloc>
-| . . .
-| . . .
-`-VarDecl 0x56313f63f738 <<stdin>:1:1, col:19> col:11 x 'int (*[3])':'int (*[3])'
+    $ clang -E -Xclang -ast-dump -fno-color-diagnostics 1.c
+    TranslationUnitDecl 0x56313f5e0938 <<invalid sloc>> <invalid sloc>
+    | . . .
+    | . . .
+    `-VarDecl 0x56313f63f738 <<stdin>:1:1, col:19> col:11 x 'int (*[3])':'int (*[3])'
 ```
 
 The `TypeName` `int (*[3])` has the same type as that in the `Declaration`
@@ -395,49 +395,49 @@ hierarchy of the AST nodes that mirrors the type-list that will be built later.
 One can also confirm that the description is correct, by consulting the AST
 produced by `gcc`:
 
-```
-$ # On bash shell
+```bash
+    $ # On bash shell
 
-$ cat 1.c
-int main()
-{
-        int (*((((x)[3]))));
-}
+    $ cat 1.c
+    int main()
+    {
+            int (*((((x)[3]))));
+    }
 
-$ cc -fdump-tree-original-raw 1.c -c
-$ cat 1.c.005t.original
+    $ cc -fdump-tree-original-raw 1.c -c
+    $ cat 1.c.005t.original
 
-@5      var_decl         name: @9       type: @10      scpe: @11
-                         srcp: 1.c:3                   size: @12
-                         algn: 64       used: 0
-@9      identifier_node  strg: x        lngt: 1
+    @5      var_decl         name: @9       type: @10      scpe: @11
+                             srcp: 1.c:3                   size: @12
+                             algn: 64       used: 0
+    @9      identifier_node  strg: x        lngt: 1
 
-# The type of the variable "x" is given in the tree-node @10
-@10     array_type       size: @12      algn: 64       elts: @17
-                         domn: @18
+    # The type of the variable "x" is given in the tree-node @10
+    @10     array_type       size: @12      algn: 64       elts: @17
+                             domn: @18
 
-# Thus, "x" is of an array-type. The total size of the array is given by
-# tree-node @12, which is an integer-constant 192 (bits). The total size
-# of the array is therefore 24 bytes.
-@12     integer_cst      type: @21     int: 192
+    # Thus, "x" is of an array-type. The total size of the array is given
+    # by the tree-node @12, which is an integer-constant 192 (bits). The
+    # total size of the array is therefore 24 bytes.
+    @12     integer_cst      type: @21     int: 192
 
-# Each element of array "x" is of type given by tree-node @17.
-@17     pointer_type     size: @26      algn: 64       ptd : @13
+    # Each element of array "x" is of type given by tree-node @17.
+    @17     pointer_type     size: @26      algn: 64       ptd : @13
 
-# Thus, each element of array "x" is a pointer to some type. The size of
-# the pointer is given by tree-node @26; it is 64 bits = 8 bytes.
-# Thus the array "x" has dimensions 24/8 = 3, or array[3].
-@26     integer_cst      type: @21     int: 64
+    # Thus, each element of array "x" is a pointer to some type. The size
+    # of the pointer is given by the tree-node @26; it is 64 bits = 8 bytes.
+    # Thus the array "x" has dimensions 24/8 = 3, or array[3].
+    @26     integer_cst      type: @21     int: 64
 
-# The pointed-to type is given by tree-node @13.
-@13     integer_type     name: @22      size: @23      algn: 32
-                         prec: 32       sign: signed   min : @24
-                         max : @25
-@22     type_decl        name: @35      type: @13
-@35     identifier_node  strg: int      lngt: 3
+    # The pointed-to type is given by tree-node @13.
+    @13     integer_type     name: @22      size: @23      algn: 32
+                             prec: 32       sign: signed   min : @24
+                             max : @25
+    @22     type_decl        name: @35      type: @13
+    @35     identifier_node  strg: int      lngt: 3
 
-# Thus, "x" is an array[3] of a pointer to an int, or as can be declared,
-# 'int *x[3]'.
+    # Thus, "x" is an array[3] of a pointer to an int, or as can be declared,
+    # 'int *x[3]'.
 ```
 
 
@@ -545,10 +545,10 @@ of the `Declarator` that follows. Scanning the `Declarator` as shown below.
 Thus, the description is
 
 ```
-   x is ...
-   an array[3] of ...
-   a pointer to ...
-   an int.
+    x is ...
+    an array[3] of ...
+    a pointer to ...
+    an int.
 ```
 
 which is the same as that for `int *x[3]`.
@@ -612,10 +612,10 @@ of the `Declarator` that follows. Scanning the `Declarator` as shown below.
 Thus, the description is
 
 ```
-   x is ...
-   a pointer to ...
-   an array[3] of ...
-   an int.
+    x is ...
+    a pointer to ...
+    an array[3] of ...
+    an int.
 ```
 
 ---
@@ -892,25 +892,25 @@ array (of *any* legal/illegal type), is in violation of the standard.
 The outputs from `gcc` and `clang`:
 
 ```bash
-$ cat 1.c
-int main(void)
-{
-        return sizeof(int (*(((()[3])))));
-}
+    $ cat 1.c
+    int main(void)
+    {
+            return sizeof(int (*(((()[3])))));
+    }
 
 
-$ cc 1.c
-1.c: In function ‘main’:
-1.c:3:9: error: type name declared as function returning an array
-    3 |         return sizeof(int (*(((()[3])))));
-      |         ^~~~~~
+    $ cc 1.c
+    1.c: In function ‘main’:
+    1.c:3:9: error: type name declared as function returning an array
+        3 |         return sizeof(int (*(((()[3])))));
+          |         ^~~~~~
 
 
-$ clang 1.c
-1.c:3:25: error: function cannot return array type 'int (*[3])'
-    3 |         return sizeof(int (*(((()[3])))));
-      |                                ^
-1 error generated.
+    $ clang 1.c
+    1.c:3:25: error: function cannot return array type 'int (*[3])'
+        3 |         return sizeof(int (*(((()[3])))));
+          |                                ^
+    1 error generated.
 ```
 
 ---
