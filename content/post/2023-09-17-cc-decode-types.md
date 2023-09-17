@@ -251,7 +251,7 @@ scan the constructs between it and the corresponding closing punctuator `]`;
 in this example it is just a number `5`. Hence, this declares an `array[5]`.
 
 ```
-            input: [5]
+            input:
       output-list: x array[3] * func() * array[5]
     operand-stack:
 ```
