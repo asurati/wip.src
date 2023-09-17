@@ -388,7 +388,9 @@ although correct, isn't in its minimal possible representation.
 
 As demonstrated below, `gcc` doesn't suffer from this problem, as it displays
 the type not in the form of a string, as `clang` does, but in the form of an
-hierarchy of the AST nodes that mirrors the type-list that will be built later.
+hierarchy of the AST nodes - that hierarchy records the ordering of the types.
+The type-list, that is built by the method described in this post, is exactly
+equivalent to a single path in `gcc`'s type-hierarchy.
 
 ---
 
