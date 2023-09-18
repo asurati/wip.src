@@ -423,7 +423,7 @@ produced by `gcc`:
     # total size of the array is therefore 24 bytes.
     @12     integer_cst      type: @21     int: 192
 
-    # Each element of array "x" is of type given by tree-node @17.
+    # Each element of the array "x" is of the type given by the tree-node @17.
     @17     pointer_type     size: @26      algn: 64       ptd : @13
 
     # Thus, each element of array "x" is a pointer to some type. The size
@@ -695,7 +695,8 @@ as shown below.
 
 A punctuator `[` is found next in the input. Its precedence is higher than that
 of the punctuator `*` found on the top of the operand-stack. Hence, the
-processing of the punctuator `[` takes priority of that of `*`.
+processing of the punctuator `[` takes priority over that of the punctuator
+`*`.
 
 The output-list is empty; hence, the rule `(1)` of the
 [Rules for TypeNames](#typename_rules) applies.
