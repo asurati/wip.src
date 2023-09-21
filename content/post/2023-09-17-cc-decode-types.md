@@ -59,10 +59,10 @@ automatically.
 
 ### Rules for Typedef:<a name="typedef_rules"></a>
 
-Handling `typedef`s is a straightforward splicing of type-lists. The
+Handling `typedef`'d types is a straightforward splicing of type-lists. The
 `DeclarationSpecifiers` will house the `TypedefName` instead of a
 builtin-type. The type-list of final target (after recursively resolving
-more `TypedefName`s) of the `TypedefName` is appended to the type-list of the
+inner `TypedefName`s) of the `TypedefName` is appended to the type-list of the
 `Declarator` to generate a complete type-list.
 
 ---
@@ -644,14 +644,14 @@ surrounded by the pair.
 The location of the `Identifier` can be decided by following these rules
 for an `AbstractDeclarator`.
 
-1. If an identifier has not yet been found (i.e. the output-list is
-   empty), and if an array-type (i.e. `ArrayAbstractDeclarator`) is found,
-   then the location of the `Identifier` is to the immediate left of the
-   corresponding opening punctuator `[`.
-2. If an identifier has not yet been found (i.e. the output-list is
-   empty), and if a punctuator ')' is found, then there are two separate
-   situations, depending on whether the pair of parentheses is empty or
-   not:
+1. If the location of the identifier has not yet been found (i.e. the
+   output-list is empty), and if an array-type (i.e. `ArrayAbstractDeclarator`)
+   is found, then the location of the `Identifier` is to the immediate left of
+   the corresponding opening punctuator `[`.
+2. If the location of the identifier has not yet been found (i.e. the
+   output-list is empty), and if a punctuator ')' is found, then there are two
+   separate situations, depending on whether the pair of parentheses is empty
+   or not:
     1. If the pair of parentheses is empty, then the location of the
        `Identifier` is to the immediate left of the corresponding opening
        punctuator `(`.
