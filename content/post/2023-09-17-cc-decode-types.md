@@ -649,7 +649,7 @@ for an `AbstractDeclarator`.
    is found, then the location of the `Identifier` is to the immediate left of
    the corresponding opening punctuator `[`.
 2. If the location of the identifier has not yet been found (i.e. the
-   output-list is empty), and if a punctuator ')' is found, then there are two
+   output-list is empty), and if a punctuator `)` is found, then there are two
    separate situations, depending on whether the pair of parentheses is empty
    or not:
     1. If the pair of parentheses is empty, then the location of the
