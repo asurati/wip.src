@@ -8,6 +8,10 @@ tags:
   - C
 ---
 
+*[Update #1](#update1) on: 23th September, 2023.*
+
+---
+
 This post demonstrates a method to decode the `Declaration`s and
 `TypeName`s found in the C language, into a list of types, or a `type-list`.
 The method is similar to that
@@ -798,8 +802,8 @@ as shown below.
 
 A punctuator `)` is found next in the input.
 Before the punctuator is removed from the input-stream, one can see that
-the output-list is empty, and the corresponding opening punctuator `(` is on
-the top of the operand-stack (i.e., this pair of parentheses is empty.)
+the output-list is empty, and the corresponding opening punctuator `(` is
+not followed by the punctuator `*`.
 
 Hence, the rule `(2.2)` of the [Rules for TypeNames](#typename_rules) applies.
 
@@ -916,7 +920,73 @@ The outputs from `gcc` and `clang`:
 
 ---
 
-### Example #6:
+### Example #6:<a name="example6"></a>
+
+The initial state for the example is:
+
+```
+            input: int (int)
+      output-list:
+    operand-stack:
+```
+
+The `TypeSpecifier` `int` is a part of the `SpecifierQualifierList` and not
+of the `AbstractDeclarator` that follows. Scanning the `AbstractDeclarator`
+as shown below.
+
+```
+            input: (int)
+      output-list:
+    operand-stack:
+```
+
+```
+            input: int)
+      output-list:
+    operand-stack: (
+```
+
+```
+            input: )
+      output-list:
+    operand-stack: ( int
+```
+
+A punctuator `)` is found next in the input. Before the punctuator is removed
+from the input-stream, one can see that the output-list is empty, and the
+corresponding opening punctuator `(` is not followed by the punctuator `*`.
+
+Hence, the rule `(2.2)` of the [Rules for TypeNames](#typename_rules) applies.
+
+The position of the `Identifier` is shown here in `int x(int)` through
+the use of the name `x`.
+
+```
+            input: (int)
+      output-list: x
+    operand-stack:
+```
+
+Since the location of the `Identifier` is now available, the rules now are the
+same as they were when scanning a `Declaration`.
+
+```
+            input:
+      output-list: x func(int)
+    operand-stack:
+```
+
+The description of the type is:
+
+```
+    x is ...
+    a function that takes one parameter of type int and returns ...
+    an int
+```
+
+---
+
+### Example #7:
 
 The type of the `Declaration` `char (*(*x[3])())[5]` is same as the `TypeName`
 `char (*(*[3])()))[5]` obtained by removing the `Identifier` `x`.
@@ -927,7 +997,7 @@ It is the same as the location of `x` in the `Declaration`.
 
 ---
 
-### Example #7:
+### Example #8:
 
 The type of the `Declaration` `int (*x)[3]` is same as the `TypeName`
 `int (*)[3]` obtained by removing the `Identifier` `x`.
@@ -935,5 +1005,13 @@ The type of the `Declaration` `int (*x)[3]` is same as the `TypeName`
 Within the `TypeName`, the location of the `Identifier` is provided by the
 application of the rule `(2.1)` of the [Rules for TypeNames](#typename_rules).
 It is the same as the location of `x` in the `Declaration`.
+
+---
+
+### **Update #1:** <a name="update1"></a>
+
+Fixed [Rules for TypeNames](#typename_rules) to add support for
+`FunctionAbstractDeclarator`. Added [Example #6](#example6) that is a
+declaration of a function.
 
 ---
