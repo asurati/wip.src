@@ -8,7 +8,7 @@ tags:
   - C
 ---
 
-*[Update #1](#update1) on: 23th September, 2023.*
+*[Update #1](#update1) on: 23rd September, 2023.*
 
 ---
 
