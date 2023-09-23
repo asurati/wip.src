@@ -650,14 +650,12 @@ for an `AbstractDeclarator`.
    the corresponding opening punctuator `[`.
 2. If the location of the identifier has not yet been found (i.e. the
    output-list is empty), and if a punctuator `)` is found, then there are two
-   separate situations, depending on whether the pair of parentheses is empty
-   or not:
-    1. If the pair of parentheses is empty, then the location of the
-       `Identifier` is to the immediate left of the corresponding opening
-       punctuator `(`.
-    2. If the pair of parentheses is not empty, then the location of the
-       `Identifier` is to the immediate left of the corresponding closing
-       punctuator `)`.
+   separate situations:
+    1. If a punctuator `*` follows the opening punctuator `(`, then the
+       location of the `Identifier` is to the immediate left of the punctuator
+       `)`.
+    2. Else, the location of the `Identifier` is to the immediate left of the
+       opening punctuator `(`.
 
 ---
 
@@ -803,18 +801,18 @@ Before the punctuator is removed from the input-stream, one can see that
 the output-list is empty, and the corresponding opening punctuator `(` is on
 the top of the operand-stack (i.e., this pair of parentheses is empty.)
 
-Hence, the rule `(2.1)` of the [Rules for TypeNames](#typename_rules) applies.
+Hence, the rule `(2.2)` of the [Rules for TypeNames](#typename_rules) applies.
 
 The position of the `Identifier` is shown here in `int (*(((x()[3]))))` through
 the use of the name `x`. As is evident, this `Declaration` is not same as
 `int (*((((x)[3]))))`.
 
 The rule says that the position of the `Identifier` is to the immediate left
-of the opening punctuator `(`. To apply this rule, pop the punctuator `(` from
-the top of the operand-stack, and move it back into the start of the input.
-Then, place `x` at the start of the currently empty output-list as a
-place-holder for the actual `Identifier`.
-The current state then is as shown below:
+of the opening punctuator `(`. To apply this rule, pop the elements from
+the operand-stack and place them back on to the head of the input. Stop
+once the opening punctuator `(` is moved back into the input. Then, place `x`
+at the start of the currently empty output-list as a place-holder for the
+omitted `Identifier`. The current state then is as shown below:
 
 ```
             input: ()[3]))))
@@ -935,7 +933,7 @@ The type of the `Declaration` `int (*x)[3]` is same as the `TypeName`
 `int (*)[3]` obtained by removing the `Identifier` `x`.
 
 Within the `TypeName`, the location of the `Identifier` is provided by the
-application of the rule `(2.2)` of the [Rules for TypeNames](#typename_rules).
+application of the rule `(2.1)` of the [Rules for TypeNames](#typename_rules).
 It is the same as the location of `x` in the `Declaration`.
 
 ---
