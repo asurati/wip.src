@@ -86,7 +86,7 @@ Arch Linux, the compiler is available as the
 ```
 ---
 ### Emacs configuration:
-Modify the Emacs init file`, to append `exec-path` with the path to the
+Modify the Emacs init file, to append `exec-path` with the path to the
 `ada-mode` executables.
 
 ``` lisp
