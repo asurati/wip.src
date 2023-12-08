@@ -41,6 +41,8 @@ Arch Linux, the compiler is available as the
             https://git.savannah.gnu.org/git/emacs/elpa.git wisi
         git clone --depth 1 --single-branch --branch externals/ada-mode \
             https://git.savannah.gnu.org/git/emacs/elpa.git ada-mode
+        git clone --depth 1 --single-branch --branch externals/gpr-mode \
+            https://git.savannah.gnu.org/git/emacs/elpa.git gpr-mode
         sed -i '/wisitoken-bnf-generate/d' $SRC/ada-mode/build.sh
         wget --show-progress -O $LR1_TAB $LR1_URL
     fi
@@ -83,18 +85,25 @@ Arch Linux, the compiler is available as the
 
     # lr1 table
     mv $SRC/$LR1_TAB $TOOLS/am/bin/
+
+    # gpr-mode
+    cd $SRC/gpr-mode
+    ./build.sh
+    ./install.sh $TOOLS/gm
+
+    # Run 'strip -s' on gprbuild, ada-mode and gpr-mode binaries.
 ```
 ---
 ### Emacs configuration:
 Modify the Emacs init file, to append `exec-path` with the path to the
-`ada-mode` executables.
+`ada-mode` and `gpr-mode` binaries.
 
 ``` lisp
     (setq exec-path (append exec-path '(expand-file-name "~/tools/ada/am/bin")))
+    (setq exec-path (append exec-path '(expand-file-name "~/tools/ada/gm/bin")))
 ```
 
-When launching Emacs, ensure that `$TOOLS/gprb/bin` is added to `$PATH` so that
-GPRbuild binaries are available. When trying to compile an `.adb` file
-through the `C-c C-c` command, Emacs attempts to launch `gprbuild`.
+When launching Emacs, ensure that `gprbuild` binaries are in `$PATH`; various
+Emacs `ada-mode` commands look for those binaries.
 
 ---
