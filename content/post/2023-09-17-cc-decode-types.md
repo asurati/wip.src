@@ -85,7 +85,7 @@ The `TypeSpecifier` `char` belongs to `DeclarationSpecifiers`. The rest of the
 declaration belongs to `Declarator`. The scanning of the `Declarator` is as
 described below.
 
-Create an `operand-stack` that is initially empty. Create an `output-list`,
+Create an `operator-stack` that is initially empty. Create an `output-list`,
 also initially empty, that will store the `Identifier` and punctuators that
 make up the `Declarator`. The `Identifier` of a `Declarator` will also be the
 first element in the output-list.
@@ -100,9 +100,9 @@ in the same manner, on per-parameter private stacks.
 The starting state for this example:
 
 ```
-            input: char (*(*x[3])())[5]
-      output-list:
-    operand-stack: (Note: The top of the stack is at its right-most end.)
+             input: char (*(*x[3])())[5]
+       output-list:
+    operator-stack: (Note: The top of the stack is at its right-most end.)
 ```
 ---
 
@@ -112,9 +112,9 @@ Move `char` into `DeclarationSpecifiers`. The rest of the input is a
 part of the `Declarator`.
 
 ```
-            input: (*(*x[3])())[5]
-      output-list:
-    operand-stack:
+             input: (*(*x[3])())[5]
+       output-list:
+    operator-stack:
 ```
 ---
 
@@ -123,26 +123,26 @@ part of the `Declarator`.
 A punctuator `(` is found next. It is a precedence-ordering left-parenthesis,
 and not the one that begins the parameter-list of a function-type. The latter
 is found only after the `Identifier` has been moved into the output-list.
-Push the punctuator `(` on to the operand-stack.
+Push the punctuator `(` on to the operator-stack.
 
 ```
-            input: *(*x[3])())[5]
-      output-list:
-    operand-stack: (
+             input: *(*x[3])())[5]
+       output-list:
+    operator-stack: (
 ```
 
 ---
 
 #### Step #1.03:
 
-A punctuator `*` is found next. Since the top of the operand-stack contains
+A punctuator `*` is found next. Since the top of the operator-stack contains
 a precedence-ordering punctuator `(`, the punctuator `*` must be directly
-pushed on to the operand-stack.
+pushed on to the operator-stack.
 
 ```
-            input: (*x[3])())[5]
-      output-list:
-    operand-stack: ( *
+             input: (*x[3])())[5]
+       output-list:
+    operator-stack: ( *
 ```
 
 ---
@@ -150,12 +150,12 @@ pushed on to the operand-stack.
 #### Step #1.04:
 
 A punctuator `(` is found next. It too is a precedence-ordering punctuator `(`;
-therefore, push it on to the operand-stack.
+therefore, push it on to the operator-stack.
 
 ```
-            input: *x[3])())[5]
-      output-list:
-    operand-stack: ( * (
+             input: *x[3])())[5]
+       output-list:
+    operator-stack: ( * (
 ```
 
 ---
@@ -165,9 +165,9 @@ therefore, push it on to the operand-stack.
 A punctuator `*` is found next. Similar process as shown in Step #1.03.
 
 ```
-            input: x[3])())[5]
-      output-list:
-    operand-stack: ( * ( *
+             input: x[3])())[5]
+       output-list:
+    operator-stack: ( * ( *
 ```
 
 ---
@@ -180,9 +180,9 @@ as the beginning of the parameter-list of a function-type, and not as a
 precedence-ordering punctuator `(`.
 
 ```
-            input: [3])())[5]
-      output-list: x
-    operand-stack: ( * ( *
+             input: [3])())[5]
+       output-list: x
+    operator-stack: ( * ( *
 ```
 
 ---
@@ -190,15 +190,15 @@ precedence-ordering punctuator `(`.
 #### Step #1.07:
 
 A punctuator `[` is found next. It's precedence is higher than that of the
-punctuator `*` found on the top of the operand-stack.
+punctuator `*` found on the top of the operator-stack.
 Since the punctuator `[` begins an array-type, scan the constructs between it
 and the corresponding closing punctuator `]`; in this example it is just a
 number `3`. Hence, this declares an `array[3]`.
 
 ```
-            input: )())[5]
-      output-list: x array[3]
-    operand-stack: ( * ( *
+             input: )())[5]
+       output-list: x array[3]
+    operator-stack: ( * ( *
 ```
 
 ---
@@ -206,13 +206,13 @@ number `3`. Hence, this declares an `array[3]`.
 #### Step #1.08:
 
 A punctuator `)` is found next. This signals that one must pop the
-operand-stack and move the elements found on it into the output-list, until a
+operator-stack and move the elements found on it into the output-list, until a
 `(` is popped. Then, both the punctuators, `(` and `)`, are discarded.
 
 ```
-            input: ())[5]
-      output-list: x array[3] *
-    operand-stack: ( *
+             input: ())[5]
+       output-list: x array[3] *
+    operator-stack: ( *
 ```
 
 ---
@@ -226,9 +226,9 @@ the `Identifier` will always be the first entry on it), the punctuator
 Scan the parameters recursively, and consume the closing `)`.
 
 ```
-            input: )[5]
-      output-list: x array[3] * func()
-    operand-stack: ( *
+             input: )[5]
+       output-list: x array[3] * func()
+    operator-stack: ( *
 ```
 
 ---
@@ -236,35 +236,35 @@ Scan the parameters recursively, and consume the closing `)`.
 #### Step #1.10:
 
 A punctuator `)` is found next. This signals that one must pop the
-operand-stack and move the elements found on it into the output-list, until a
+operator-stack and move the elements found on it into the output-list, until a
 `(` is popped. Then, both the punctuators, `(` and `)`, are discarded.
 
 ```
-            input: [5]
-      output-list: x array[3] * func() *
-    operand-stack:
+             input: [5]
+       output-list: x array[3] * func() *
+    operator-stack:
 ```
 
 ---
 
 #### Step #1.11:
 
-A punctuator `[` is found next. The operand-stack is empty; there is no need
+A punctuator `[` is found next. The operator-stack is empty; there is no need
 for precedence comparisons. Since the punctuator `[` begins an array-type,
 scan the constructs between it and the corresponding closing punctuator `]`;
 in this example it is just a number `5`. Hence, this declares an `array[5]`.
 
 ```
-            input:
-      output-list: x array[3] * func() * array[5]
-    operand-stack:
+             input:
+       output-list: x array[3] * func() * array[5]
+    operator-stack:
 ```
 
 ---
 
 #### Step #1.12:
 
-The input is now exhausted. The operand-stack too is empty. Thus, the scan is
+The input is now exhausted. The operator-stack too is empty. Thus, the scan is
 grammatically correct, though the output-list may have to be semantically
 verified for correctness, to flag
 [semantically invalid constructs](#precedence_rules).
@@ -457,95 +457,95 @@ demonstrated below.
 The initial state for this example is:
 
 ```
-            input: int (*((((x)[3]))))
-      output-list:
-    operand-stack:
+             input: int (*((((x)[3]))))
+       output-list:
+    operator-stack:
 ```
 
 The `TypeSpecifier` `int` is a part of the `DeclarationSpecifiers` and not
 of the `Declarator` that follows. Scanning the `Declarator` as shown below.
 
 ```
-            input: (*((((x)[3]))))
-      output-list:
-    operand-stack:
+             input: (*((((x)[3]))))
+       output-list:
+    operator-stack:
 ```
 
 ```
-            input: *((((x)[3]))))
-      output-list:
-    operand-stack: (
+             input: *((((x)[3]))))
+       output-list:
+    operator-stack: (
 ```
 
 ```
-            input: ((((x)[3]))))
-      output-list:
-    operand-stack: ( *
+             input: ((((x)[3]))))
+       output-list:
+    operator-stack: ( *
 ```
 
 ```
-            input: (((x)[3]))))
-      output-list:
-    operand-stack: ( * (
+             input: (((x)[3]))))
+       output-list:
+    operator-stack: ( * (
 ```
 
 ```
-            input: ((x)[3]))))
-      output-list:
-    operand-stack: ( * ( (
+             input: ((x)[3]))))
+       output-list:
+    operator-stack: ( * ( (
 ```
 ```
-            input: (x)[3]))))
-      output-list:
-    operand-stack: ( * ( ( (
-```
-
-```
-            input: x)[3]))))
-      output-list:
-    operand-stack: ( * ( ( ( (
+             input: (x)[3]))))
+       output-list:
+    operator-stack: ( * ( ( (
 ```
 
 ```
-            input: )[3]))))
-      output-list: x
-    operand-stack: ( * ( ( ( (
+             input: x)[3]))))
+       output-list:
+    operator-stack: ( * ( ( ( (
 ```
 
 ```
-            input: [3]))))
-      output-list: x
-    operand-stack: ( * ( ( (
+             input: )[3]))))
+       output-list: x
+    operator-stack: ( * ( ( ( (
 ```
 
 ```
-            input: ))))
-      output-list: x array[3]
-    operand-stack: ( * ( ( (
+             input: [3]))))
+       output-list: x
+    operator-stack: ( * ( ( (
 ```
 
 ```
-            input: )))
-      output-list: x array[3]
-    operand-stack: ( * ( (
+             input: ))))
+       output-list: x array[3]
+    operator-stack: ( * ( ( (
 ```
 
 ```
-            input: ))
-      output-list: x array[3]
-    operand-stack: ( * (
+             input: )))
+       output-list: x array[3]
+    operator-stack: ( * ( (
 ```
 
 ```
-            input: )
-      output-list: x array[3]
-    operand-stack: ( *
+             input: ))
+       output-list: x array[3]
+    operator-stack: ( * (
 ```
 
 ```
-            input:
-      output-list: x array[3] *
-    operand-stack:
+             input: )
+       output-list: x array[3]
+    operator-stack: ( *
+```
+
+```
+             input:
+       output-list: x array[3] *
+    operator-stack:
 ```
 
 Thus, the description is
@@ -570,9 +570,9 @@ The initial state for the example is:
 
 
 ```
-            input: int (*x)[3]
-      output-list:
-    operand-stack:
+             input: int (*x)[3]
+       output-list:
+    operator-stack:
 ```
 
 The `TypeSpecifier` `int` is a part of the `DeclarationSpecifiers` and not
@@ -580,39 +580,39 @@ of the `Declarator` that follows. Scanning the `Declarator` as shown below.
 
 
 ```
-            input: (*x)[3]
-      output-list:
-    operand-stack:
+             input: (*x)[3]
+       output-list:
+    operator-stack:
 ```
 
 ```
-            input: *x)[3]
-      output-list:
-    operand-stack: (
+             input: *x)[3]
+       output-list:
+    operator-stack: (
 ```
 
 ```
-            input: x)[3]
-      output-list:
-    operand-stack: ( *
+             input: x)[3]
+       output-list:
+    operator-stack: ( *
 ```
 
 ```
-            input: )[3]
-      output-list: x
-    operand-stack: ( *
+             input: )[3]
+       output-list: x
+    operator-stack: ( *
 ```
 
 ```
-            input: [3]
-      output-list: x *
-    operand-stack:
+             input: [3]
+       output-list: x *
+    operator-stack:
 ```
 
 ```
-            input:
-      output-list: x * array[3]
-    operand-stack:
+             input:
+       output-list: x * array[3]
+    operator-stack:
 ```
 
 Thus, the description is
@@ -674,9 +674,9 @@ Removing `x` from the `Declaration` `int *x[3]` results in a `TypeName`
 The initial state for the example is:
 
 ```
-            input: int *[3]
-      output-list:
-    operand-stack:
+             input: int *[3]
+       output-list:
+    operator-stack:
 ```
 
 The `TypeSpecifier` `int` is a part of the `SpecifierQualifierList` and not
@@ -684,19 +684,19 @@ of the `AbstractDeclarator` that follows. Scanning the `AbstractDeclarator`
 as shown below.
 
 ```
-            input: *[3]
-      output-list:
-    operand-stack:
+             input: *[3]
+       output-list:
+    operator-stack:
 ```
 
 ```
-            input: [3]
-      output-list:
-    operand-stack: *
+             input: [3]
+       output-list:
+    operator-stack: *
 ```
 
 A punctuator `[` is found next in the input. Its precedence is higher than that
-of the punctuator `*` found on the top of the operand-stack. Hence, the
+of the punctuator `*` found on the top of the operator-stack. Hence, the
 processing of the punctuator `[` takes priority over that of the punctuator
 `*`.
 
@@ -713,23 +713,23 @@ Since the location of the `Identifier` is now available, the rules now are the
 same as they were when scanning a `Declaration`.
 
 ```
-            input: [3]
-      output-list: x
-    operand-stack: *
+             input: [3]
+       output-list: x
+    operator-stack: *
 ```
 
 ```
-            input:
-      output-list: x array[3]
-    operand-stack: *
+             input:
+       output-list: x array[3]
+    operator-stack: *
 ```
 
-Now empty the operand-stack:
+Now empty the operator-stack:
 
 ```
-            input:
-      output-list: x array[3] *
-    operand-stack:
+             input:
+       output-list: x array[3] *
+    operator-stack:
 ```
 
 As can be seen, this `Declaration` is the same as that of a variable that is
@@ -749,9 +749,9 @@ not equivalent to `int *[3]`, as shown below.
 The initial state for the example is:
 
 ```
-            input: int (*(((()[3]))))
-      output-list:
-    operand-stack:
+             input: int (*(((()[3]))))
+       output-list:
+    operator-stack:
 ```
 
 The `TypeSpecifier` `int` is a part of the `SpecifierQualifierList` and not
@@ -759,45 +759,45 @@ of the `AbstractDeclarator` that follows. Scanning the `AbstractDeclarator`
 as shown below.
 
 ```
-            input: (*(((()[3]))))
-      output-list:
-    operand-stack:
+             input: (*(((()[3]))))
+       output-list:
+    operator-stack:
 ```
 
 ```
-            input: *(((()[3]))))
-      output-list:
-    operand-stack: (
+             input: *(((()[3]))))
+       output-list:
+    operator-stack: (
 ```
 
 ```
-            input: (((()[3]))))
-      output-list:
-    operand-stack: ( *
+             input: (((()[3]))))
+       output-list:
+    operator-stack: ( *
 ```
 
 ```
-            input: ((()[3]))))
-      output-list:
-    operand-stack: ( * (
+             input: ((()[3]))))
+       output-list:
+    operator-stack: ( * (
 ```
 
 ```
-            input: (()[3]))))
-      output-list:
-    operand-stack: ( * ( (
+             input: (()[3]))))
+       output-list:
+    operator-stack: ( * ( (
 ```
 
 ```
-            input: ()[3]))))
-      output-list:
-    operand-stack: ( * ( ( (
+             input: ()[3]))))
+       output-list:
+    operator-stack: ( * ( ( (
 ```
 
 ```
-            input: )[3]))))
-      output-list:
-    operand-stack: ( * ( ( ( (
+             input: )[3]))))
+       output-list:
+    operator-stack: ( * ( ( ( (
 ```
 
 A punctuator `)` is found next in the input.
@@ -813,30 +813,30 @@ the use of the name `x`. As is evident, this `Declaration` is not same as
 
 The rule says that the position of the `Identifier` is to the immediate left
 of the opening punctuator `(`. To apply this rule, pop the elements from
-the operand-stack and place them back on to the head of the input. Stop
+the operator-stack and place them back on to the head of the input. Stop
 once the opening punctuator `(` is moved back into the input. Then, place `x`
 at the start of the currently empty output-list as a place-holder for the
 omitted `Identifier`. The current state then is as shown below:
 
 ```
-            input: ()[3]))))
-      output-list: x
-    operand-stack: ( * ( ( (
+             input: ()[3]))))
+       output-list: x
+    operator-stack: ( * ( ( (
 ```
 
 Since the location of the `Identifier` is now available, the rules now are the
 same as they were when scanning a `Declaration`.
 
 ```
-            input: [3]))))
-      output-list: x func()
-    operand-stack: ( * ( ( (
+             input: [3]))))
+       output-list: x func()
+    operator-stack: ( * ( ( (
 ```
 
 ```
-            input: ))))
-      output-list: x func() array[3]
-    operand-stack: ( * ( ( (
+             input: ))))
+       output-list: x func() array[3]
+    operator-stack: ( * ( ( (
 ```
 
 Here, the partial type can be described as:
@@ -854,27 +854,27 @@ since `clang`, as shown below, also informs about the type of the array that
 the function returns.
 
 ```
-            input: )))
-      output-list: x func() array[3]
-    operand-stack: ( * ( (
+             input: )))
+       output-list: x func() array[3]
+    operator-stack: ( * ( (
 ```
 
 ```
-            input: ))
-      output-list: x func() array[3]
-    operand-stack: ( * (
+             input: ))
+       output-list: x func() array[3]
+    operator-stack: ( * (
 ```
 
 ```
-            input: )
-      output-list: x func() array[3]
-    operand-stack: ( *
+             input: )
+       output-list: x func() array[3]
+    operator-stack: ( *
 ```
 
 ```
-            input:
-      output-list: x func() array[3] *
-    operand-stack:
+             input:
+       output-list: x func() array[3] *
+    operator-stack:
 ```
 
 The description of the type is:
@@ -925,9 +925,9 @@ The outputs from `gcc` and `clang`:
 The initial state for the example is:
 
 ```
-            input: int (int)
-      output-list:
-    operand-stack:
+             input: int (int)
+       output-list:
+    operator-stack:
 ```
 
 The `TypeSpecifier` `int` is a part of the `SpecifierQualifierList` and not
@@ -935,21 +935,21 @@ of the `AbstractDeclarator` that follows. Scanning the `AbstractDeclarator`
 as shown below.
 
 ```
-            input: (int)
-      output-list:
-    operand-stack:
+             input: (int)
+       output-list:
+    operator-stack:
 ```
 
 ```
-            input: int)
-      output-list:
-    operand-stack: (
+             input: int)
+       output-list:
+    operator-stack: (
 ```
 
 ```
-            input: )
-      output-list:
-    operand-stack: ( int
+             input: )
+       output-list:
+    operator-stack: ( int
 ```
 
 A punctuator `)` is found next in the input. Before the punctuator is removed
@@ -962,18 +962,18 @@ The position of the `Identifier` is shown here in `int x(int)` through
 the use of the name `x`.
 
 ```
-            input: (int)
-      output-list: x
-    operand-stack:
+             input: (int)
+       output-list: x
+    operator-stack:
 ```
 
 Since the location of the `Identifier` is now available, the rules now are the
 same as they were when scanning a `Declaration`.
 
 ```
-            input:
-      output-list: x func(int)
-    operand-stack:
+             input:
+       output-list: x func(int)
+    operator-stack:
 ```
 
 The description of the type is:
