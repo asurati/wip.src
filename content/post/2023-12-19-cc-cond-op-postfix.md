@@ -285,7 +285,7 @@ skip/evaluate the sub-expressions, as commanded by their controlling condition.
 
 ```
       output: a ? b ? c : d 2 f * + ¿ : g ¿
-              ^   ^     |           ^ ^   ^
+              ^   ^     ^           ^ ^   ^
               |   |     |           | |   |
               |   +-----+-----------+ |   |
               +-----------------------+---+
