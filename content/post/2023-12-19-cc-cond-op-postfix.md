@@ -21,7 +21,7 @@ the delimiter serves as the end-marker for the corresponding conditional
 expression.
 
 The operators are `*`, `+`, `?`, `¿` and `:`, while the variables are
-lowercase alphabets (excluding `e`, to avoid confusion with `¿`), or constants.
+lowercase alphabets, or constants.
 
 ---
 
