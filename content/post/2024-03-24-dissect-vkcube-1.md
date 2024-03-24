@@ -90,7 +90,7 @@ vkcube.
     -Dcairo-tests=disabled -Dtests=false -Dman-pages=disabled -Dvalgrind=disabled
     ninja -C $BLD/drm install -j4
     
-    # mesa (only vulkan for AMD + ACO)
+    # mesa (only vulkan for AMD + LLVM)
     cd $SRC/mesa
     PKG_CONFIG_PATH=$INSTALL/wp/share/pkgconfig \
     meson setup --reconfigure $BLD/mesa -Dprefix=$INSTALL/mesa \
